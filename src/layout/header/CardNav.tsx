@@ -31,7 +31,7 @@ export interface CardNavProps {
   menuColor?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
-  onCtaClick?: () => void;
+  onCtaClick: () => void;
 }
 
 const CardNav: React.FC<CardNavProps> = ({
@@ -47,7 +47,7 @@ const CardNav: React.FC<CardNavProps> = ({
   user,
   onLogout,
   onCtaClick,
-}) => {
+}: CardNavProps) => {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -221,7 +221,11 @@ const CardNav: React.FC<CardNavProps> = ({
               type="button"
               className="card-nav-cta-button"
               style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-              onClick={onCtaClick}
+              onClick={() => {
+                onCtaClick();
+                setIsExpanded(false);
+                setIsHamburgerOpen(false);
+              }}
             >
               시작하기
               <GoArrowRight
