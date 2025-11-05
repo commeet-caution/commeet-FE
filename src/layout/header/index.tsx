@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CardNav from "./CardNav";
 import logo from "../../assets/SooMung.webp";
-import LoginModal from "../../features/auth/LoginModal";
+import LoginModal from "../../components/auth/LoginModal";
 import type { User } from "../../shared/user";
 
 export default function Header() {
@@ -32,12 +32,7 @@ export default function Header() {
       textColor: "#fff",
       links: [
         {
-          label: "Featured",
-          href: "/projects/featured",
-          ariaLabel: "Featured Projects",
-        },
-        {
-          label: "Case Studies",
+          label: "student Main",
           href: "/projects/case-studies",
           ariaLabel: "Project Case Studies",
         },

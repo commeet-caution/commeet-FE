@@ -1,3 +1,5 @@
+import "./index.css";
+
 export default function Home() {
   return (
     <div className="landing-container">
@@ -13,8 +15,7 @@ export default function Home() {
       <main className="landing-main">
         <h2>
           상명대학교 컴퓨터과학과 <br />
-          교수님들과의 면담, <br />
-          더 쉽고 간편하게.
+          교수님들과의 면담, <br />더 쉽고 간편하게.
         </h2>
         <p>지금 바로 시작해보세요.</p>
       </main>

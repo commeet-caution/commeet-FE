@@ -6,15 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./index.css"; // 전역 스타일
 import Layout from "./layout"; // 레이아웃 컴포넌트
-import Home from "./Home"; // 홈 페이지 컴포넌트
-import {
-  // AboutCompany,
-  // AboutCareers,
-  // ProjectsFeatured,
-  // ProjectsCaseStudies,
-  NotFound,
-  ProfMain,
-} from "./pages"; // 기타 페이지 컴포넌트
+import * as pages from "./pages"; // 기타 페이지 컴포넌트
 // "./pages"를 import하면 자동으로 index.tsx를 참조함
 
 // TypeScript 로 작성하기에 필요한 타입 정의
@@ -26,19 +18,11 @@ createRoot(rootElement).render(
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Home />} />
-          {/* <Route path="about/company" element={<AboutCompany />} />
-          <Route path="about/careers" element={<AboutCareers />} />
-          <Route path="projects/featured" element={<ProjectsFeatured />} /> */}
-          <Route path="projects/profMain" element={<ProfMain />} />
-          {/* <Route
-            path="projects/case-studies"
-            element={<ProjectsCaseStudies />}
-          /> */}
-          <Route path="*" element={<NotFound />} />
+          <Route index element={<pages.Home />} />
+          <Route path="projects/profMain" element={<pages.ProfMain />} />
+          <Route path="*" element={<pages.NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>
 );
-

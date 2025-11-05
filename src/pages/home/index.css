@@ -1,0 +1,365 @@
+/* ========== 0) Base ========== */
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #242424;
+}
+
+/* ========== 1) Design Tokens ========== */
+:root {
+  /* Layout */
+  --layout-header-h: 64px;
+
+  /* Colors */
+  --bg: #242424;
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.75);
+  --line: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+
+  /* Buttons */
+  --accent: #ffffff;
+  --ink: #0a0a0a;
+
+  /* Radius / Width / Spacing */
+  --radius: 14px;
+  --maxw: 72rem; /* 1152px */
+  --container-w: min(var(--maxw), 92vw);
+  --section-gap: clamp(32px, 6vw, 80px);
+}
+
+/* ========== 2) Home (Hero) ========== */
+/* Layout에 헤더가 있으므로 Home의 헤더는 숨김 */
+.landing-header {
+  display: none;
+}
+
+/* 히어로: full-bleed + 정중앙 */
+.landing-container {
+  margin-inline: calc(50% - 50vw);
+  width: 100vw;
+  min-height: calc(100svh - var(--layout-header-h));
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  padding-inline: 0; /* 히어로는 좌우 여백 제거 */
+}
+
+.landing-main {
+  width: var(--container-w);
+  margin: 0 auto;
+  text-align: center;
+
+  min-height: calc(100svh - var(--layout-header-h));
+  display: grid;
+  place-content: center;
+}
+
+.landing-main h2 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.landing-main p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Hero actions (버튼 줄) */
+.actions {
+  margin-top: 14px;
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Buttons */
+.start-button,
+.login-button,
+.ghost-button {
+  appearance: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease, transform 0.04s ease;
+}
+
+/* Primary */
+.start-button {
+  background: var(--accent);
+  color: var(--ink);
+  border: 1px solid transparent;
+  padding: 12px 18px;
+}
+.start-button:hover {
+  opacity: 0.9;
+}
+.start-button:active {
+  transform: translateY(1px);
+}
+
+/* Secondary */
+.login-button {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+}
+.login-button:hover {
+  background: var(--surface-hover);
+}
+.login-button:active {
+  transform: translateY(1px);
+}
+
+/* Ghost (링크형 버튼) */
+.ghost-button {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+}
+.ghost-button:hover {
+  background: var(--surface-hover);
+}
+.ghost-button:active {
+  transform: translateY(1px);
+}
+
+/* ========== 3) Sections (Hero 이후) ========== */
+/* Hero 밑의 섹션들은 full-bleed 영향을 제거하고 컨테이너 폭 사용 */
+.landing-container + .section,
+.landing-container ~ .section {
+  width: 100%;
+  padding-block: var(--section-gap);
+  border-top: 1px solid var(--line);
+  margin-inline: auto;
+  background: var(--bg);
+}
+
+/* 섹션 내부 공통 컨테이너 */
+.section__inner {
+  width: var(--container-w);
+  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 16px;
+  padding: 0; /* 세로 간격은 섹션이 담당 */
+}
+
+/* ========== 4) Badges (USP) ========== */
+.badges .section__inner {
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+.badges .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: var(--text);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+/* ========== 5) Features Grid ========== */
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  text-align: left;
+  transition: transform 0.08s ease, background 0.2s ease;
+}
+.card:hover {
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+.card__icon {
+  font-size: 1.4rem;
+}
+.card__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.card__desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* ========== 6) Steps ========== */
+.steps__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 800px) {
+  .steps__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.step__num {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0a0a0a;
+  font-weight: 800;
+}
+.step__title {
+  margin: 2px 0 4px;
+  font-size: 1.02rem;
+}
+.step__desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* ========== 7) CTA ========== */
+.cta .section__inner {
+  display: block;
+}
+.cta__box {
+  width: var(--container-w);
+  margin-inline: auto;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px 18px;
+}
+.cta__title {
+  margin: 0 0 6px;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+}
+.cta__desc {
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+.cta__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ========== 8) Responsive tweaks ========== */
+@media (max-width: 480px) {
+  .landing-main {
+    width: min(var(--maxw), 94vw);
+  }
+}
+/* === 위폴드(첫 화면) 안에 HERO + QUICK가 함께 들어오도록 레이아웃 조정 === */
+.landing-container {
+  /* 이미 full-bleed + min-height 지정됨 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 한 화면 안에서 수직 중앙 정렬 */
+  gap: clamp(16px, 3vw, 28px); /* hero와 quick 사이 간격 */
+}
+
+/* hero는 높이를 고정하지 않고, 전체 컨테이너가 중앙 배치 */
+.landing-main {
+  min-height: unset; /* 기존 min-height 해제 */
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* === QUICK GRID: 4개 기능 카드 중앙 정렬 === */
+.quick__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 28px; /* 세로 간격 */
+  column-gap: 48px; /* 👈 가로 간격 늘림 */
+  width: min(720px, 90%);
+  margin: 48px auto 0;
+  text-align: center;
+  justify-items: center;
+}
+
+/* 반응형 (모바일에서는 세로로 나열) */
+@media (max-width: 720px) {
+  .quick__grid {
+    grid-template-columns: 1fr;
+    gap: 18px; /* 좁은 화면은 간격 줄이기 */
+  }
+}
+
+/* 각 기능 아이템 카드 */
+.quick__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* 아이콘과 텍스트 간격 */
+  padding: 20px 16px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.quick__item:hover {
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+}
