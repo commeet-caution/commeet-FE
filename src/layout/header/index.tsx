@@ -9,23 +9,23 @@ export default function Header() {
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const items = [
-    {
-      label: "About",
-      bgColor: "#0D0716",
-      textColor: "#fff",
-      links: [
-        {
-          label: "Company",
-          href: "/about/company",
-          ariaLabel: "About Company",
-        },
-        {
-          label: "Careers",
-          href: "/about/careers",
-          ariaLabel: "About Careers",
-        },
-      ],
-    },
+    // {
+    //   label: "About",
+    //   bgColor: "#0D0716",
+    //   textColor: "#fff",
+    //   links: [
+    //     {
+    //       label: "Company",
+    //       href: "/about/company",
+    //       ariaLabel: "About Company",
+    //     },
+    //     {
+    //       label: "Careers",
+    //       href: "/about/careers",
+    //       ariaLabel: "About Careers",
+    //     },
+    //   ],
+    // },
     {
       label: "Projects",
       bgColor: "#170D27",
@@ -40,6 +40,11 @@ export default function Header() {
           label: "Case Studies",
           href: "/projects/case-studies",
           ariaLabel: "Project Case Studies",
+        },
+        {
+          label: "Prof Main",
+          href: "/projects/profMain",
+          ariaLabel: "Professor Main Page",
         },
       ],
     },

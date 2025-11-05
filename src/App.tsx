@@ -8,11 +8,12 @@ import "./index.css"; // 전역 스타일
 import Layout from "./layout"; // 레이아웃 컴포넌트
 import Home from "./Home"; // 홈 페이지 컴포넌트
 import {
-  AboutCompany,
-  AboutCareers,
-  ProjectsFeatured,
-  ProjectsCaseStudies,
+  // AboutCompany,
+  // AboutCareers,
+  // ProjectsFeatured,
+  // ProjectsCaseStudies,
   NotFound,
+  ProfMain,
 } from "./pages"; // 기타 페이지 컴포넌트
 // "./pages"를 import하면 자동으로 index.tsx를 참조함
 
@@ -26,13 +27,14 @@ createRoot(rootElement).render(
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="about/company" element={<AboutCompany />} />
+          {/* <Route path="about/company" element={<AboutCompany />} />
           <Route path="about/careers" element={<AboutCareers />} />
-          <Route path="projects/featured" element={<ProjectsFeatured />} />
-          <Route
+          <Route path="projects/featured" element={<ProjectsFeatured />} /> */}
+          <Route path="projects/profMain" element={<ProfMain />} />
+          {/* <Route
             path="projects/case-studies"
             element={<ProjectsCaseStudies />}
-          />
+          /> */}
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
