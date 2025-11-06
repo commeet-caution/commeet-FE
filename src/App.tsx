@@ -20,6 +20,7 @@ createRoot(rootElement).render(
         <Route element={<Layout />}>
           <Route index element={<pages.Home />} />
           <Route path="projects/profMain" element={<pages.ProfMain />} />
+          <Route path="projects/studentMain" element={<pages.StudentMain />} />
           <Route path="*" element={<pages.NotFound />} />
         </Route>
       </Routes>
