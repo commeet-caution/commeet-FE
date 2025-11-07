@@ -1,0 +1,22 @@
+.prof-card-inner {
+  border: 1px solid #edf0f7;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fdfdff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.prof-card-inner__header { ... }
+.prof-card-inner__details { font-size: 14px; color: #6b7285; }
+.prof-card-inner__button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background-color: #1d4ed8;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.prof-card-inner__button:hover { background-color: #1e40af; }

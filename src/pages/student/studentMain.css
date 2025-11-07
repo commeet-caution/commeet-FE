@@ -1,0 +1,118 @@
+/* StudentMainPage.css */
+
+/* --- ProfMain.css에서 복사해 온 공통 스타일 --- */
+/* (팀원과 상의하여 공통 CSS 파일로 분리하는 것이 가장 좋습니다) */
+
+.student-main-page { /* .prof-main-page 대신 .student-main-page로 변경 */
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  background-color: #f5f7fb;
+  border-radius: 24px;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.student-main { /* .prof-main 대신 .student-main으로 변경 */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  color: #1c1f2c;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.prof-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+.prof-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.prof-card__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #121327;
+  margin: 0;
+  display: flex; /* 아이콘을 위해 추가 */
+  align-items: center; /* 아이콘을 위해 추가 */
+  gap: 8px; /* 아이콘을 위해 추가 */
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #e0f2ff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* --- 학생 페이지 전용 스타일 추가 --- */
+
+.professor-grid {
+  display: grid;
+  /* 한 줄에 3개의 카드를 배치, 반응형 고려 */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.search-bar__input {
+  flex-grow: 1; /* 검색창이 남는 공간을 모두 차지하도록 */
+  padding: 12px 16px 12px 40px; /* 아이콘을 위한 왼쪽 패딩 */
+  border: 1px solid #edf0f7;
+  border-radius: 12px;
+  background-color: #fbfcff;
+  font-size: 15px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>');
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+
+.search-bar__select {
+  padding: 12px 16px;
+  border: 1px solid #edf0f7;
+  border-radius: 12px;
+  background-color: #fbfcff;
+  font-size: 15px;
+  color: #374151;
+}
+
+.reservation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 반응형 스타일 - 팀원 코드에서 복사 */
+@media (max-width: 768px) {
+  .prof-main-page {
+    margin: 0 auto;
+    width: calc(100% - 32px);
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .prof-card {
+    padding: 20px;
+  }
+  .search-bar {
+    flex-direction: column;
+  }
+}
