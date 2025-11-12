@@ -155,8 +155,6 @@ export default function AppointmentModal({
 
         {/* === 모달 본문 (스크롤 영역) === */}
         <div className="modal-body">
-          <p className="modal-subtitle">아래 작성하여 면담을 예약해주세요.</p>
-
           <div className="form-group">
             <label className="form-label">학생 이름</label>
             <input type="text" className="form-input"/>

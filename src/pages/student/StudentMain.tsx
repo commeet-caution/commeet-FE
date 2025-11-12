@@ -1,10 +1,9 @@
 // StudentMainPage.tsx (수정)
 import React, { useState } from "react"; // useState import
 import "./StudentMain.css";
-import ProfessorCard from "../../components/student/ProfessorCard.tsx";
-import ReservationItem from "../../components/student/ReservationItem.tsx";
-import AppointmentModal from "../../components/student/AppointmentModal.tsx"; // 👈 모달 컴포넌트 import
-
+import ProfessorCard from "../../components/student/ProfessorCard";
+import ReservationItem from "../../components/student/ReservationItem";
+import AppointmentModal from "../../components/student/AppointmentModal";
 // --- 가짜 데이터 (동일) ---
 const favoriteProfessors = [
   { id: 1, name: "김교수", major: "컴퓨터공학과", isFavorite: true },
@@ -14,7 +13,7 @@ const favoriteProfessors = [
 const professorList = [
   {
     id: 3,
-    name: "김교수",
+    name: "민경하",
     major: "컴퓨터공학과 • 조교수",
     specialty: "인공지능, 머신러닝",
     office: "공학관 301호",
@@ -66,8 +65,6 @@ export default function StudentMainPage() {
 
   return (
     <div className="prof-main-page">
-      {/* Header 컴포넌트가 이곳에 들어갑니다. (별도 파일로 관리) */}
-      {/* <Header /> */}
 
       <main className="student-main">
         {/* 1. 즐겨찾기 교수 섹션 */}

@@ -7,8 +7,13 @@
   flex-direction: column;
   gap: 12px;
 }
-.prof-card-inner__header { ... }
-.prof-card-inner__details { font-size: 14px; color: #6b7285; }
+.prof-card-inner__header {
+  ...;
+}
+.prof-card-inner__details {
+  font-size: 14px;
+  color: #6b7285;
+}
 .prof-card-inner__button {
   width: 100%;
   padding: 12px;
@@ -19,4 +24,6 @@
   font-weight: 600;
   cursor: pointer;
 }
-.prof-card-inner__button:hover { background-color: #1e40af; }
+.prof-card-inner__button:hover {
+  background-color: #1e40af;
+}
