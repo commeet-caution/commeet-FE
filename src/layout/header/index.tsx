@@ -32,9 +32,9 @@ export default function Header() {
       textColor: "#fff",
       links: [
         {
-          label: "student Main",
-          href: "/projects/case-studies",
-          ariaLabel: "Project Case Studies",
+          label: "Student Main",
+          href: "/projects/studentMain",
+          ariaLabel: "Project Student Main Page",
         },
         {
           label: "Prof Main",

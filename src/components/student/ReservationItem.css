@@ -1,0 +1,31 @@
+.reservation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fbff;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.reservation-item__info {
+  ...;
+}
+.reservation-item__datetime {
+  font-size: 14px;
+  color: #6b7285;
+}
+.reservation-item__prof {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+.reservation-item__topic {
+  ...;
+}
+.reservation-item__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.reservation-item__button--cancel {
+  ...;
+}

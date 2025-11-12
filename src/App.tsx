@@ -1,5 +1,6 @@
 import { StrictMode } from "react"; // 개발용 버그 탐지용 래퍼
 import { createRoot } from "react-dom/client";
+import "bootstrap/dist/css/bootstrap.min.css"; // 부트스트랩 CSS
 
 // 라우팅 라이브러리
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -20,6 +21,7 @@ createRoot(rootElement).render(
         <Route element={<Layout />}>
           <Route index element={<pages.Home />} />
           <Route path="projects/profMain" element={<pages.ProfMain />} />
+          <Route path="projects/studentMain" element={<pages.StudentMain />} />
           <Route path="*" element={<pages.NotFound />} />
         </Route>
       </Routes>

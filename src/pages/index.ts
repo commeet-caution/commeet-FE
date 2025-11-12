@@ -5,3 +5,4 @@
 export { default as NotFound } from "./NotFound";
 export { default as ProfMain } from "./prof/ProfMain";
 export { default as Home } from "./home/Home";
+export { default as StudentMain } from "./student/StudentMain";
