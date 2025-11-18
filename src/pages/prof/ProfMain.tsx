@@ -8,6 +8,7 @@ import {
   parseIsoDate,
   toIsoDate,
 } from "../../shared/calendar";
+import "../../styles/common-pages.css";
 import "./profMain.css";
 
 // ISO 날짜 문자열을 키로 갖는 선택 시간 상태 맵

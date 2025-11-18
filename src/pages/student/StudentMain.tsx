@@ -1,5 +1,6 @@
 // StudentMainPage.tsx (수정)
 import React, { useState } from "react"; // useState import
+import "../../styles/common-pages.css";
 import "./StudentMain.css";
 import ProfessorCard from "../../components/student/ProfessorCard";
 import ReservationItem from "../../components/student/ReservationItem";
@@ -34,7 +35,15 @@ const professorList = [
   },
 ];
 
-const myReservations = [
+type ReservationStatus = "확정" | "대기" | "취소";
+const myReservations: {
+  id: number;
+  profName: string;
+  date: string;
+  time: string;
+  topic: string;
+  status: ReservationStatus;
+}[] = [
   {
     id: 101,
     profName: "김교수 교수님",
@@ -65,7 +74,6 @@ export default function StudentMainPage() {
 
   return (
     <div className="prof-main-page">
-
       <main className="student-main">
         {/* 1. 즐겨찾기 교수 섹션 */}
         <section className="prof-card">
