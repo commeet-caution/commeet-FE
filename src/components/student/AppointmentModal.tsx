@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from "react";
-import "./Modal.css"; // 2. 스타일 파일을 import 합니다.
-// import axios from "axios"; // API 통신용
+import React, { useState } from "react";
+import "./Modal.css";
+import axios from "axios";
+import {
+  buildCalendarDates,
+  dayLabels,
+  formatMonthLabel,
+  parseIsoDate,
+  toIsoDate,
+} from "../../shared/calendar";
 
 // --- 컴포넌트가 받을 Props 타입 정의 ---
 interface AppointmentModalProps {
@@ -14,23 +21,7 @@ interface AppointmentModalProps {
   } | null; // 선택된 교수가 없을 수도 있으므로 null 허용
 }
 
-// --- 캘린더 날짜 생성 도우미 함수 (간단 예시) ---
-const getCalendarDates = (year: number, month: number) => {
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const numDays = lastDay.getDate();
-
-  const dates: (Date | null)[] = []; // 날짜 객체 또는 null을 담을 배열
-  // 이전 달의 날짜 채우기 (첫 날이 일요일이 아니면)
-  for (let i = 0; i < firstDay.getDay(); i++) {
-    dates.push(null);
-  }
-  // 현재 달의 날짜 채우기
-  for (let i = 1; i <= numDays; i++) {
-    dates.push(new Date(year, month, i));
-  }
-  return dates;
-};
+// (이전 단순 캘린더 헬퍼 제거: shared/calendar.ts 사용)
 
 // --- 모달 컴포넌트 시작 ---
 export default function AppointmentModal({
@@ -39,8 +30,8 @@ export default function AppointmentModal({
   professor,
 }: AppointmentModalProps) {
   // --- 상태 관리 ---
-  const [currentDate, setCurrentDate] = useState(new Date()); // 현재 캘린더의 년/월
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 사용자가 선택한 날짜
+  const [currentDate, setCurrentDate] = useState(new Date()); // 현재 표시 월 (1일 기준)
+  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null); // ISO 문자열로 선택 날짜
   const [selectedTime, setSelectedTime] = useState<string | null>(null); // 사용자가 선택한 시간 (토글을 위해 null 가능)
   const [appointmentType, setAppointmentType] = useState(""); // 면담 유형
   const [appointmentTopic, setAppointmentTopic] = useState(""); // 면담 주제
@@ -60,7 +51,7 @@ export default function AppointmentModal({
   // 캘린더 계산
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth(); // 0-11
-  const dates = getCalendarDates(year, month);
+  const calendarDates = buildCalendarDates(year, month);
   const today = new Date();
   today.setHours(0, 0, 0, 0); // 오늘 날짜의 자정
 
@@ -70,12 +61,18 @@ export default function AppointmentModal({
   }
 
   // --- 이벤트 핸들러 ---
-  const handleDateClick = (date: Date | null) => {
-    if (!date || date < today) return; // 날짜가 없거나 과거 날짜면 클릭 방지
+  const handleDateClick = (dateKey: string, muted: boolean) => {
+    const dateObj = parseIsoDate(dateKey);
+    if (dateObj < today) return;
 
-    setSelectedDate(date);
-    setSelectedTime(null); // 날짜가 바뀌면 선택된 시간 초기화
-    // TODO: 선택된 날짜에 따라 API로 해당 날짜의 예약 가능 시간을 다시 가져와야 함
+    // muted(앞/뒤 달) 클릭 시 해당 달로 이동 후 선택
+    if (muted) {
+      setCurrentDate(new Date(dateObj.getFullYear(), dateObj.getMonth(), 1));
+    }
+
+    setSelectedDateKey(dateKey);
+    setSelectedTime(null); // 날짜 변경 시 시간 초기화
+    // TODO: 날짜별 가능 시간 재조회 로직 추가
   };
 
   /** 시간 버튼 토글 함수 */
@@ -96,13 +93,13 @@ export default function AppointmentModal({
       1
     ); // 1일로 설정하여 월 변경 오류 방지
     setCurrentDate(newDate);
-    setSelectedDate(null); // 월이 바뀌면 선택된 날짜 초기화
+    setSelectedDateKey(null); // 월이 바뀌면 선택된 날짜 초기화
     setSelectedTime(null); // 선택된 시간 초기화
   };
 
   const handleSubmit = async () => {
     if (
-      !selectedDate ||
+      !selectedDateKey ||
       !selectedTime ||
       !appointmentType ||
       !appointmentTopic
@@ -115,7 +112,7 @@ export default function AppointmentModal({
     const appointmentData = {
       professorId: professor.id,
       studentId: "2020123456", // TODO: 실제 로그인된 학생 ID로 교체해야 함
-      appointmentDate: selectedDate.toISOString().split("T")[0], // YYYY-MM-DD 형식
+      appointmentDate: selectedDateKey, // YYYY-MM-DD 형식 (ISO key 사용)
       appointmentTime: selectedTime,
       type: appointmentType,
       topic: appointmentTopic,
@@ -157,14 +154,11 @@ export default function AppointmentModal({
         <div className="modal-body">
           <div className="form-group">
             <label className="form-label">학생 이름</label>
-            <input type="text" className="form-input"/>
+            <input type="text" className="form-input" />
           </div>
           <div className="form-group">
             <label className="form-label">학번</label>
-            <input
-              type="text"
-              className="form-input"
-            />
+            <input type="text" className="form-input" />
           </div>
 
           <div className="form-group">
@@ -194,9 +188,7 @@ export default function AppointmentModal({
                 >
                   &lt;
                 </button>
-                <span>
-                  {year}년 {month + 1}월
-                </span>
+                <span>{formatMonthLabel(year, month)}</span>
                 <button
                   className="calendar-nav-button"
                   onClick={() => handleMonthChange("next")}
@@ -205,34 +197,41 @@ export default function AppointmentModal({
                 </button>
               </div>
               <div className="calendar-grid">
-                {["일", "월", "화", "수", "목", "금", "토"].map(
-                  (
-                    day // 한글 요일로 변경
-                  ) => (
-                    <span key={day} className="calendar-day-name">
-                      {day}
-                    </span>
-                  )
-                )}
-                {dates.map((date, index) => {
-                  const isPast = date && date < today;
-                  const isSelected =
-                    selectedDate &&
-                    date &&
-                    selectedDate.toDateString() === date.toDateString();
-
+                {dayLabels.map((d) => (
+                  <span key={d} className="calendar-day-name">
+                    {d === "Su"
+                      ? "일"
+                      : d === "Mo"
+                      ? "월"
+                      : d === "Tu"
+                      ? "화"
+                      : d === "We"
+                      ? "수"
+                      : d === "Th"
+                      ? "목"
+                      : d === "Fr"
+                      ? "금"
+                      : "토"}
+                  </span>
+                ))}
+                {calendarDates.map(({ label, dateKey, muted }) => {
+                  const dateObj = parseIsoDate(dateKey);
+                  const isPast = dateObj < today;
+                  const isSelected = selectedDateKey === dateKey;
                   return (
                     <span
-                      key={index}
-                      className={`
-                        calendar-date 
-                        ${date ? "current-month" : "disabled"} 
-                        ${isPast ? "disabled" : ""}
-                        ${isSelected ? "selected" : ""}
-                      `}
-                      onClick={() => handleDateClick(date)}
+                      key={dateKey}
+                      className={[
+                        "calendar-date",
+                        muted ? "muted" : "current-month",
+                        isPast ? "disabled" : "",
+                        isSelected ? "selected" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onClick={() => handleDateClick(dateKey, muted)}
                     >
-                      {date ? date.getDate() : ""}
+                      {label}
                     </span>
                   );
                 })}
@@ -241,7 +240,7 @@ export default function AppointmentModal({
           </div>
 
           {/* 날짜가 선택되었을 때만 시간 선택 영역 표시 */}
-          {selectedDate && (
+          {selectedDateKey && (
             <div className="form-group">
               <label className="form-label">희망 시간</label>
               <div className="time-slot-group">
