@@ -1,38 +1,16 @@
 // StudentMainPage.tsx (수정)
-import React, { useState } from "react"; // useState import
-import "../../styles/common-pages.css";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import "./StudentMain.css";
-import ProfessorCard from "../../components/student/ProfessorCard";
+import ProfessorCard, {
+  Professor,
+} from "../../components/student/ProfessorCard"; // Professor 타입을 import
 import ReservationItem from "../../components/student/ReservationItem";
 import AppointmentModal from "../../components/student/AppointmentModal";
-// --- 가짜 데이터 (동일) ---
-const favoriteProfessors = [
+
+const favoriteProfessors: Professor[] = [
   { id: 1, name: "김교수", major: "컴퓨터공학과", isFavorite: true },
   { id: 2, name: "이교수", major: "컴퓨터공학과", isFavorite: true },
-];
-
-const professorList = [
-  {
-    id: 3,
-    name: "민경하",
-    major: "컴퓨터공학과 • 조교수",
-    specialty: "인공지능, 머신러닝",
-    office: "공학관 301호",
-  },
-  {
-    id: 4,
-    name: "이교수",
-    major: "컴퓨터공학과 • 부교수",
-    specialty: "데이터베이스, 빅데이터",
-    office: "공학관 305호",
-  },
-  {
-    id: 5,
-    name: "박교수",
-    major: "소프트웨어학과 • 조교수",
-    specialty: "웹개발, 클라우드",
-    office: "IT관 202호",
-  },
 ];
 
 type ReservationStatus = "확정" | "대기" | "취소";
@@ -53,20 +31,85 @@ const myReservations: {
     status: "확정",
   },
 ];
-// --- 가짜 데이터 끝 ---
 
 export default function StudentMainPage() {
-  // --- 모달 관련 상태 ---
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false); // 모달 표시 여부
-  const [selectedProfessor, setSelectedProfessor] = useState<any>(null); // 현재 선택된 교수 정보
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [searchName, setSearchName] = useState("");
+  const [searchDepartment, setSearchDepartment] = useState("");
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(
+    null
+  );
 
-  // 모달을 여는 함수
-  const handleOpenAppointmentModal = (professor: any) => {
+  const fetchProfessors = useCallback(async () => {
+    try {
+      const params = {
+        name: searchName,
+        department: searchDepartment,
+      };
+
+      // const response = await axios.get("/api/professors", {
+      //   params,
+      //   headers: { Authorization: "Bearer {JWT}" },
+      // });
+      // setProfessors(response.data);
+
+      // --- Mock API 응답 ---
+      const mockProfessorList: Professor[] = [
+        {
+          professorId: 3,
+          name: "민경하",
+          department: "컴퓨터과학전공",
+          email: "mkh@test.com",
+          major: "컴퓨터과학전공",
+          specialty: "인공지능, 머신러닝",
+          office: "공학관 301호",
+        },
+        {
+          professorId: 4,
+          name: "이교수",
+          department: "컴퓨터과학전공",
+          email: "lee@test.com",
+          major: "컴퓨터과학전공",
+          specialty: "데이터베이스, 빅데이터",
+          office: "공학관 305호",
+        },
+        {
+          professorId: 5,
+          name: "박교수",
+          department: "휴먼AI전공",
+          email: "park@test.com",
+          major: "휴먼AI전공",
+          specialty: "웹개발, 클라우드",
+          office: "공학관 202호",
+        },
+      ];
+
+      let filteredList = mockProfessorList;
+      if (searchName) {
+        filteredList = filteredList.filter((p) => p.name.includes(searchName));
+      }
+      if (searchDepartment) {
+        filteredList = filteredList.filter(
+          (p) => p.department === searchDepartment
+        );
+      }
+      setProfessors(filteredList);
+    } catch (error) {
+      console.error("Failed to fetch professors:", error);
+      setProfessors([]);
+    }
+  }, [searchName, searchDepartment]);
+
+  useEffect(() => {
+    fetchProfessors();
+  }, [fetchProfessors]);
+
+  const handleOpenAppointmentModal = (professor: Professor) => {
     setSelectedProfessor(professor);
     setShowAppointmentModal(true);
   };
 
-  // 모달을 닫는 함수
   const handleCloseAppointmentModal = () => {
     setShowAppointmentModal(false);
     setSelectedProfessor(null);
@@ -75,7 +118,6 @@ export default function StudentMainPage() {
   return (
     <div className="prof-main-page">
       <main className="student-main">
-        {/* 1. 즐겨찾기 교수 섹션 */}
         <section className="prof-card">
           <div className="prof-card__header">
             <h2 className="prof-card__title">⭐ 즐겨찾기 교수</h2>
@@ -86,47 +128,50 @@ export default function StudentMainPage() {
                 key={prof.id}
                 professor={prof}
                 type="favorite"
-                onOpenModal={handleOpenAppointmentModal} // 👈 모달 열기 함수 전달
+                onOpenModal={handleOpenAppointmentModal}
               />
             ))}
           </div>
         </section>
 
-        {/* 2. 교수 목록 섹션 */}
         <section className="prof-card">
           <div className="prof-card__header">
             <h2 className="prof-card__title">🔍 교수 목록</h2>
-            <span className="pill">{professorList.length}명 교수</span>
+            <span className="pill">{professors.length}명 교수</span>
           </div>
 
-          {/* 검색바 (기존과 동일) */}
           <div className="search-bar">
             <input
               type="text"
               className="search-bar__input"
-              placeholder="교수명, 학과, 전문분야로 검색..."
+              placeholder="교수명으로 검색..."
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
             />
-            <select className="search-bar__select">
+            <select
+              className="search-bar__select"
+              value={searchDepartment}
+              onChange={(e) => setSearchDepartment(e.target.value)}
+            >
               <option value="">전체 학과</option>
               <option value="컴퓨터공학과">컴퓨터공학과</option>
-              <option value="소프트웨어학과">소프트웨어학과</option>
+              <option value="컴퓨터과학전공">컴퓨터과학전공</option>
+              <option value="휴먼AI전공">휴먼AI전공</option>
             </select>
           </div>
 
-          {/* 교수 목록 그리드 */}
           <div className="professor-grid">
-            {professorList.map((prof) => (
+            {professors.map((prof) => (
               <ProfessorCard
-                key={prof.id}
+                key={prof.professorId || prof.id} // API 응답과 기존 데이터 모두 처리
                 professor={prof}
                 type="list"
-                onOpenModal={handleOpenAppointmentModal} // 👈 모달 열기 함수 전달
+                onOpenModal={handleOpenAppointmentModal}
               />
             ))}
           </div>
         </section>
 
-        {/* 3. 내 예약 현황 섹션 (기존과 동일) */}
         <section className="prof-card">
           <div className="prof-card__header">
             <h2 className="prof-card__title">🗓️ 내 예약 현황</h2>
@@ -139,11 +184,10 @@ export default function StudentMainPage() {
         </section>
       </main>
 
-      {/* 👈 모달 컴포넌트 추가 */}
       <AppointmentModal
-        show={showAppointmentModal} // show 상태에 따라 모달 표시/숨김
-        onClose={handleCloseAppointmentModal} // 모달 닫기 함수 전달
-        professor={selectedProfessor} // 선택된 교수 정보 전달
+        show={showAppointmentModal}
+        onClose={handleCloseAppointmentModal}
+        professor={selectedProfessor}
       />
     </div>
   );

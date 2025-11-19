@@ -6,22 +6,15 @@ import {
   dayLabels,
   formatMonthLabel,
   parseIsoDate,
-  toIsoDate,
 } from "../../shared/calendar";
+import { Professor } from "./ProfessorCard";
 
 // --- 컴포넌트가 받을 Props 타입 정의 ---
 interface AppointmentModalProps {
   show: boolean; // 모달을 보여줄지 말지 결정하는 boolean 값
   onClose: () => void; // 모달 닫기 함수
-  professor: {
-    // 현재 면담을 신청할 교수 정보
-    id: number;
-    name: string;
-    major: string;
-  } | null; // 선택된 교수가 없을 수도 있으므로 null 허용
+  professor: Professor | null; // 선택된 교수가 없을 수도 있으므로 null 허용
 }
-
-// (이전 단순 캘린더 헬퍼 제거: shared/calendar.ts 사용)
 
 // --- 모달 컴포넌트 시작 ---
 export default function AppointmentModal({
@@ -33,19 +26,22 @@ export default function AppointmentModal({
   const [currentDate, setCurrentDate] = useState(new Date()); // 현재 표시 월 (1일 기준)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null); // ISO 문자열로 선택 날짜
   const [selectedTime, setSelectedTime] = useState<string | null>(null); // 사용자가 선택한 시간 (토글을 위해 null 가능)
-  const [appointmentType, setAppointmentType] = useState(""); // 면담 유형
-  const [appointmentTopic, setAppointmentTopic] = useState(""); // 면담 주제
+  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null); // 사용자가 선택한 시간의 슬롯 ID
+  const [topic, setTopic] = useState(""); // 면담 주제 (API의 topic enum: CAREER, EMPLOYMENT)
+  const [studentMessage, setStudentMessage] = useState(""); // 교수에게 보낼 메시지
 
-  // TODO: API에서 받아올 실제 예약 가능 시간 목록 (오전/오후로 나눔)
-  const availableMorningTimes = ["09:00", "10:00", "11:00"];
+  // TODO: API에서 받아올 실제 예약 가능 시간 목록 (slotId 포함)
+  const availableMorningTimes = [
+    { time: "09:00", slotId: 101 },
+    { time: "10:00", slotId: 102 },
+    { time: "11:00", slotId: 103 },
+  ];
   const availableAfternoonTimes = [
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "20:00",
+    { time: "13:00", slotId: 201 },
+    { time: "14:00", slotId: 202 },
+    { time: "15:00", slotId: 203 },
+    { time: "16:00", slotId: 204 },
+    { time: "17:00", slotId: 205 },
   ];
 
   // 캘린더 계산
@@ -72,17 +68,20 @@ export default function AppointmentModal({
 
     setSelectedDateKey(dateKey);
     setSelectedTime(null); // 날짜 변경 시 시간 초기화
+    setSelectedSlotId(null); // 날짜 변경 시 슬롯 ID 초기화
     // TODO: 날짜별 가능 시간 재조회 로직 추가
   };
 
   /** 시간 버튼 토글 함수 */
-  const handleTimeClick = (time: string) => {
+  const handleTimeClick = (time: string, slotId: number) => {
     // 만약 이미 선택된 시간을 다시 클릭했다면,
     if (selectedTime === time) {
       setSelectedTime(null); // 선택을 해제합니다 (토글 Off)
+      setSelectedSlotId(null);
     } else {
       // 그렇지 않다면, (새로운 시간을) 선택합니다.
       setSelectedTime(time);
+      setSelectedSlotId(slotId);
     }
   };
 
@@ -95,32 +94,34 @@ export default function AppointmentModal({
     setCurrentDate(newDate);
     setSelectedDateKey(null); // 월이 바뀌면 선택된 날짜 초기화
     setSelectedTime(null); // 선택된 시간 초기화
+    setSelectedSlotId(null); // 선택된 슬롯 ID 초기화
   };
 
   const handleSubmit = async () => {
-    if (
-      !selectedDateKey ||
-      !selectedTime ||
-      !appointmentType ||
-      !appointmentTopic
-    ) {
-      alert("모든 필수 정보를 입력해주세요.");
+    if (!selectedSlotId || !topic) {
+      alert("날짜, 시간, 면담 주제를 모두 선택해주세요.");
       return;
     }
 
-    // TODO: 백엔드 API 명세서에 맞춰 데이터 구성
+    // API 명세서에 맞춰 데이터 구성
     const appointmentData = {
-      professorId: professor.id,
-      studentId: "2020123456", // TODO: 실제 로그인된 학생 ID로 교체해야 함
-      appointmentDate: selectedDateKey, // YYYY-MM-DD 형식 (ISO key 사용)
-      appointmentTime: selectedTime,
-      type: appointmentType,
-      topic: appointmentTopic,
+      student_id: 2020123456, // TODO: 실제 로그인된 학생 ID로 교체해야 함
+      slotId: selectedSlotId,
+      topic: topic, // "CAREER" 또는 "EMPLOYMENT"
+      studentMessage: studentMessage,
     };
 
     try {
       // API 호출 (엔드포인트는 예시입니다. 실제 주소로 변경하세요)
-      const response = await axios.post("/api/appointments", appointmentData);
+      const response = await axios.post(
+        "/api/appointments/request",
+        appointmentData,
+        {
+          headers: {
+            Authorization: "Bearer {JWT}", // TODO: 실제 JWT 토큰으로 교체해야 합니다.
+          },
+        }
+      );
       console.log("면담 예약 성공:", response.data);
       alert("면담 예약이 성공적으로 완료되었습니다.");
       onClose(); // 모달 닫기
@@ -162,19 +163,18 @@ export default function AppointmentModal({
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="appointmentType">
-              면담 유형
+            <label className="form-label" htmlFor="appointmentTopic">
+              면담 주제
             </label>
             <select
-              id="appointmentType"
+              id="appointmentTopic"
               className="form-select"
-              value={appointmentType}
-              onChange={(e) => setAppointmentType(e.target.value)}
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
             >
-              <option value="">면담 유형을 선택하세요</option>
-              <option value="학업 상담">학업 상담</option>
-              <option value="취업 상담">취업 상담</option>
-              <option value="진로 상담">진로 상담</option>
+              <option value="">면담 주제를 선택하세요</option>
+              <option value="CAREER">진로 상담</option>
+              <option value="EMPLOYMENT">취업 상담</option>
             </select>
           </div>
 
@@ -246,13 +246,13 @@ export default function AppointmentModal({
               <div className="time-slot-group">
                 <p className="time-slot-group__label">오전</p>
                 <div className="time-slot-grid">
-                  {availableMorningTimes.map((time) => (
+                  {availableMorningTimes.map(({ time, slotId }) => (
                     <button
                       key={time}
                       className={`time-slot-button ${
                         selectedTime === time ? "selected" : ""
                       }`}
-                      onClick={() => handleTimeClick(time)}
+                      onClick={() => handleTimeClick(time, slotId)}
                       // TODO: 이미 예약된 시간은 disabled 처리
                     >
                       {time}
@@ -261,13 +261,13 @@ export default function AppointmentModal({
                 </div>
                 <p className="time-slot-group__label mt-4">오후</p>
                 <div className="time-slot-grid">
-                  {availableAfternoonTimes.map((time) => (
+                  {availableAfternoonTimes.map(({ time, slotId }) => (
                     <button
                       key={time}
                       className={`time-slot-button ${
                         selectedTime === time ? "selected" : ""
                       }`}
-                      onClick={() => handleTimeClick(time)}
+                      onClick={() => handleTimeClick(time, slotId)}
                       // TODO: 이미 예약된 시간은 disabled 처리
                     >
                       {time}
@@ -279,13 +279,13 @@ export default function AppointmentModal({
           )}
 
           <div className="form-group">
-            <label className="form-label">면담 주제</label>
+            <label className="form-label">교수에게 보낼 메시지 (선택)</label>
             <textarea
               className="form-input"
               rows={3}
-              placeholder="면담하고 싶은 내용을 간단히 적어주세요."
-              value={appointmentTopic}
-              onChange={(e) => setAppointmentTopic(e.target.value)}
+              placeholder="교수님께 전달할 메시지가 있다면 입력해주세요."
+              value={studentMessage}
+              onChange={(e) => setStudentMessage(e.target.value)}
             ></textarea>
           </div>
         </div>
