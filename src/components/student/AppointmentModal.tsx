@@ -114,7 +114,7 @@ export default function AppointmentModal({
     try {
       // API 호출 (엔드포인트는 예시입니다. 실제 주소로 변경하세요)
       const response = await axios.post(
-        "/api/appointments/request",
+        "/api/appointments/",
         appointmentData,
         {
           headers: {
