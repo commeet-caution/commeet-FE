@@ -7,7 +7,6 @@ export type Professor = {
   name: string;
   major?: string;
   department?: string;
-  isFavorite?: boolean;
   specialty?: string;
   office?: string;
   email?: string;
@@ -15,8 +14,8 @@ export type Professor = {
 
 type ProfessorCardProps = {
   professor: Professor;
-  type: "favorite" | "list";
-  onOpenModal: (professor: Professor) => void;
+  type: "list";
+  onOpenModal?: (professor: Professor) => void; // 선택적으로 전달 (목록만 표시 용도 지원)
 };
 
 export default function ProfessorCard({
@@ -46,13 +45,15 @@ export default function ProfessorCard({
         </div>
       )}
 
-      <button
-        type="button"
-        className="prof-card-inner__button"
-        onClick={() => onOpenModal(professor)}
-      >
-        면담 예약
-      </button>
+      {onOpenModal && (
+        <button
+          type="button"
+          className="prof-card-inner__button"
+          onClick={() => onOpenModal(professor)}
+        >
+          면담 예약
+        </button>
+      )}
     </article>
   );
 }
