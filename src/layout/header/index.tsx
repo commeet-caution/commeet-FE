@@ -4,28 +4,19 @@ import logo from "../../assets/SooMung.webp";
 import LoginModal from "../../components/auth/LoginModal";
 import type { User } from "../../shared/user";
 
+// 🔽 추가: 로그인/로그아웃 API, 타입 import
+import {
+  loginApi,
+  logoutApi,
+  type Role,
+  type LoginUser,
+} from "../../api/auth";
+
 export default function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const items = [
-    // {
-    //   label: "About",
-    //   bgColor: "#0D0716",
-    //   textColor: "#fff",
-    //   links: [
-    //     {
-    //       label: "Company",
-    //       href: "/about/company",
-    //       ariaLabel: "About Company",
-    //     },
-    //     {
-    //       label: "Careers",
-    //       href: "/about/careers",
-    //       ariaLabel: "About Careers",
-    //     },
-    //   ],
-    // },
     {
       label: "Projects",
       bgColor: "#170D27",
@@ -57,22 +48,45 @@ export default function Header() {
     },
   ];
 
-  const onLogout = () => setUser(undefined);
+  // 🔁 수정: 로그아웃 시 서버에도 요청 보내기
+  const onLogout = async () => {
+    try {
+      await logoutApi(); // 세션 제거
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setUser(undefined); // 프론트 상태 초기화
+    }
+  };
 
-  const handleLoginSubmit = ({ role, id }: { role: string; id: number }) => {
-    const newUser: User = {
-      userId: id,
-      name:
-        role === "student"
-          ? "홍길동"
-          : role === "professor"
-          ? "김교수"
-          : "관리자",
-      grade: 1,
-      attendanceItems: [],
-    };
-    setUser(newUser);
-    setLoginOpen(false);
+  // 🔁 수정: 가짜 유저 생성 → 로그인 API 연동
+  const handleLoginSubmit = async ({
+    role,
+    id,
+    password,
+  }: {
+    role: Role;
+    id: number;
+    password: string;
+  }) => {
+    try {
+      // 1) 서버에 로그인 요청
+      const loginUser: LoginUser = await loginApi({ role, id, password });
+
+      // 2) 서버 응답값을 기존 User 타입으로 매핑
+      const newUser: User = {
+        userId: loginUser.userId,
+        name: loginUser.name,
+        grade: 1, // 아직 서버에서 안 온다면 임시 값 (필요시 수정)
+        attendanceItems: [],
+      };
+
+      setUser(newUser);
+      setLoginOpen(false);
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "로그인에 실패했습니다.");
+    }
   };
 
   return (
@@ -88,13 +102,16 @@ export default function Header() {
         ease="power3.out"
         user={user}
         onLogout={onLogout}
-        onCtaClick={() => setLoginOpen(true)}
+        onCtaClick={() => setLoginOpen(true)} // "시작하기" 버튼 → 로그인 모달 열기
       />
+
       <LoginModal
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
-        onSubmit={({ role, id }) => handleLoginSubmit({ role, id })}
+        // 🔁 수정: 이제 password까지 포함해서 그대로 넘겨줌
+        onSubmit={handleLoginSubmit}
       />
     </>
   );
 }
+
