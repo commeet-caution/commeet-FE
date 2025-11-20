@@ -7,9 +7,11 @@ export default function Footer() {
         justifyContent: "center",
         textAlign: "center",
         display: "flex",
+        color: "#888",
       }}
     >
-      <p>© 2025 Commeet. All rights reserved.</p>
+      <p>© 2025 commeet-caution. All rights reserved.</p>
     </footer>
   );
 }
+  
