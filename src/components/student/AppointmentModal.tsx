@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./Modal.css";
 import axios from "axios";
 import {
@@ -30,19 +30,23 @@ export default function AppointmentModal({
   const [topic, setTopic] = useState(""); // 면담 주제 (API의 topic enum: CAREER, EMPLOYMENT)
   const [studentMessage, setStudentMessage] = useState(""); // 교수에게 보낼 메시지
 
-  // TODO: API에서 받아올 실제 예약 가능 시간 목록 (slotId 포함)
-  const availableMorningTimes = [
-    { time: "09:00", slotId: 101 },
-    { time: "10:00", slotId: 102 },
-    { time: "11:00", slotId: 103 },
-  ];
-  const availableAfternoonTimes = [
-    { time: "13:00", slotId: 201 },
-    { time: "14:00", slotId: 202 },
-    { time: "15:00", slotId: 203 },
-    { time: "16:00", slotId: 204 },
-    { time: "17:00", slotId: 205 },
-  ];
+  // 표준 시간 슬롯 정의
+  const MORNING_TIMES = ["09:00", "10:00", "11:00"]; // 필요시 확장
+  const AFTERNOON_TIMES = ["13:00", "14:00", "15:00", "16:00", "17:00"]; // 필요시 확장
+
+  // 교수 상세 데이터의 availableSlots를 날짜/시간 기준으로 매핑
+  const slotMapByDate: Record<string, Record<string, number>> = useMemo(() => {
+    const map: Record<string, Record<string, number>> = {};
+    if (professor?.availableSlots) {
+      professor.availableSlots.forEach((slot) => {
+        const [datePart, timePartRaw] = slot.startTime.split("T");
+        const timePart = timePartRaw.slice(0, 5); // HH:MM
+        if (!map[datePart]) map[datePart] = {};
+        map[datePart][timePart] = slot.slotId;
+      });
+    }
+    return map;
+  }, [professor]);
 
   // 캘린더 계산
   const year = currentDate.getFullYear();
@@ -113,15 +117,11 @@ export default function AppointmentModal({
 
     try {
       // API 호출 (엔드포인트는 예시입니다. 실제 주소로 변경하세요)
-      const response = await axios.post(
-        "/api/appointments/",
-        appointmentData,
-        {
-          headers: {
-            Authorization: "Bearer {JWT}", // TODO: 실제 JWT 토큰으로 교체해야 합니다.
-          },
-        }
-      );
+      const response = await axios.post("/api/appointments/", appointmentData, {
+        headers: {
+          Authorization: "Bearer {JWT}", // TODO: 실제 JWT 토큰으로 교체해야 합니다.
+        },
+      });
       console.log("면담 예약 성공:", response.data);
       alert("면담 예약이 성공적으로 완료되었습니다.");
       onClose(); // 모달 닫기
@@ -246,33 +246,57 @@ export default function AppointmentModal({
               <div className="time-slot-group">
                 <p className="time-slot-group__label">오전</p>
                 <div className="time-slot-grid">
-                  {availableMorningTimes.map(({ time, slotId }) => (
-                    <button
-                      key={time}
-                      className={`time-slot-button ${
-                        selectedTime === time ? "selected" : ""
-                      }`}
-                      onClick={() => handleTimeClick(time, slotId)}
-                      // TODO: 이미 예약된 시간은 disabled 처리
-                    >
-                      {time}
-                    </button>
-                  ))}
+                  {MORNING_TIMES.map((time) => {
+                    const slotId = slotMapByDate[selectedDateKey!]?.[time];
+                    const disabled = slotId === undefined;
+                    const btnClass = [
+                      "time-slot-button",
+                      selectedTime === time ? "selected" : "",
+                      disabled ? "disabled" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ");
+                    return (
+                      <button
+                        key={time}
+                        className={btnClass}
+                        disabled={disabled}
+                        aria-disabled={disabled}
+                        onClick={() =>
+                          !disabled && handleTimeClick(time, slotId!)
+                        }
+                      >
+                        {time}
+                      </button>
+                    );
+                  })}
                 </div>
                 <p className="time-slot-group__label mt-4">오후</p>
                 <div className="time-slot-grid">
-                  {availableAfternoonTimes.map(({ time, slotId }) => (
-                    <button
-                      key={time}
-                      className={`time-slot-button ${
-                        selectedTime === time ? "selected" : ""
-                      }`}
-                      onClick={() => handleTimeClick(time, slotId)}
-                      // TODO: 이미 예약된 시간은 disabled 처리
-                    >
-                      {time}
-                    </button>
-                  ))}
+                  {AFTERNOON_TIMES.map((time) => {
+                    const slotId = slotMapByDate[selectedDateKey!]?.[time];
+                    const disabled = slotId === undefined;
+                    const btnClass = [
+                      "time-slot-button",
+                      selectedTime === time ? "selected" : "",
+                      disabled ? "disabled" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ");
+                    return (
+                      <button
+                        key={time}
+                        className={btnClass}
+                        disabled={disabled}
+                        aria-disabled={disabled}
+                        onClick={() =>
+                          !disabled && handleTimeClick(time, slotId!)
+                        }
+                      >
+                        {time}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>

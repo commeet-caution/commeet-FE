@@ -1,15 +1,23 @@
 // ProfessorCard.tsx
 import "./ProfessorCard.css";
 
+export type ProfessorSlot = {
+  slotId: number;
+  startTime: string; // ISO
+  endTime: string; // ISO
+};
+
 export type Professor = {
-  id?: number;
-  professorId?: number;
+  professorId: number; // 표준화: id 대신 professorId 사용
   name: string;
-  major?: string;
-  department?: string;
+  department: string;
+  email: string;
+  profileContent?: string; // 마크다운 프로필
+  availableSlots?: ProfessorSlot[]; // 상세 조회 시만 존재
+  // === 기존 화면용 (있으면 표시) ===
   specialty?: string;
   office?: string;
-  email?: string;
+  major?: string; // 과거 호환용 (department로 대체 예정)
 };
 
 type ProfessorCardProps = {
@@ -29,9 +37,7 @@ export default function ProfessorCard({
         <div>
           <h3 className="prof-card-inner__name">{professor.name}</h3>
           {/* API 응답(department)과 기존 데이터(major)를 모두 표시합니다. */}
-          <p className="prof-card-inner__major">
-            {professor.department || professor.major}
-          </p>
+          <p className="prof-card-inner__major">{professor.department}</p>
         </div>
         {type === "list" && (
           <span className="prof-card-inner__favorite-btn">⭐</span>

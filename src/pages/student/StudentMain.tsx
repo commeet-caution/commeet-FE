@@ -30,23 +30,144 @@ export default function StudentMainPage() {
     try {
       const mockProfessorList: Professor[] = [
         {
-          professorId: 3,
-          name: "민경하",
-          department: "컴퓨터과학전공",
+          professorId: 101,
+          name: "박교수",
+          department: "컴퓨터공학과",
+          email: "park@test.com",
+          profileContent:
+            "## 👋 안녕하세요, 박교수입니다.\n\nAI 및 머신러닝 연구실을 담당하고 있습니다.",
+          availableSlots: [
+            // 오늘 (2025-11-20)
+            {
+              slotId: 1201,
+              startTime: "2025-11-20T09:00:00",
+              endTime: "2025-11-20T09:30:00",
+            },
+            {
+              slotId: 1202,
+              startTime: "2025-11-20T09:30:00",
+              endTime: "2025-11-20T10:00:00",
+            },
+            {
+              slotId: 1203,
+              startTime: "2025-11-20T10:00:00",
+              endTime: "2025-11-20T10:30:00",
+            },
+            {
+              slotId: 1204,
+              startTime: "2025-11-20T14:00:00",
+              endTime: "2025-11-20T14:30:00",
+            },
+            {
+              slotId: 1205,
+              startTime: "2025-11-20T15:00:00",
+              endTime: "2025-11-20T15:30:00",
+            },
+            // 내일 (2025-11-21)
+            {
+              slotId: 1211,
+              startTime: "2025-11-21T09:00:00",
+              endTime: "2025-11-21T09:30:00",
+            },
+            {
+              slotId: 1212,
+              startTime: "2025-11-21T10:00:00",
+              endTime: "2025-11-21T10:30:00",
+            },
+            {
+              slotId: 1213,
+              startTime: "2025-11-21T14:00:00",
+              endTime: "2025-11-21T14:30:00",
+            },
+            // 모레 (2025-11-22)
+            {
+              slotId: 1221,
+              startTime: "2025-11-22T09:00:00",
+              endTime: "2025-11-22T09:30:00",
+            },
+            {
+              slotId: 1222,
+              startTime: "2025-11-22T15:00:00",
+              endTime: "2025-11-22T15:30:00",
+            },
+          ],
           specialty: "인공지능, 머신러닝",
           office: "공학관 301호",
         },
         {
-          professorId: 4,
-          name: "이교수",
-          department: "컴퓨터과학전공",
+          professorId: 102,
+          name: "김교수",
+          department: "컴퓨터공학과",
+          email: "kim@test.com",
+          profileContent: "## 김교수 프로필",
+          availableSlots: [
+            // 오늘
+            {
+              slotId: 1301,
+              startTime: "2025-11-20T11:00:00",
+              endTime: "2025-11-20T11:30:00",
+            },
+            {
+              slotId: 1302,
+              startTime: "2025-11-20T13:00:00",
+              endTime: "2025-11-20T13:30:00",
+            },
+            {
+              slotId: 1303,
+              startTime: "2025-11-20T16:00:00",
+              endTime: "2025-11-20T16:30:00",
+            },
+            // 내일
+            {
+              slotId: 1311,
+              startTime: "2025-11-21T09:00:00",
+              endTime: "2025-11-21T09:30:00",
+            },
+            {
+              slotId: 1312,
+              startTime: "2025-11-21T13:30:00",
+              endTime: "2025-11-21T14:00:00",
+            },
+          ],
           specialty: "데이터베이스, 빅데이터",
           office: "공학관 305호",
         },
         {
-          professorId: 5,
-          name: "박교수",
+          professorId: 103,
+          name: "이교수",
           department: "휴먼AI전공",
+          email: "lee@test.com",
+          profileContent: "## 이교수 프로필",
+          availableSlots: [
+            // 오늘
+            {
+              slotId: 1401,
+              startTime: "2025-11-20T09:30:00",
+              endTime: "2025-11-20T10:00:00",
+            },
+            {
+              slotId: 1402,
+              startTime: "2025-11-20T15:00:00",
+              endTime: "2025-11-20T15:30:00",
+            },
+            // 내일
+            {
+              slotId: 1411,
+              startTime: "2025-11-21T10:30:00",
+              endTime: "2025-11-21T11:00:00",
+            },
+            {
+              slotId: 1412,
+              startTime: "2025-11-21T14:30:00",
+              endTime: "2025-11-21T15:00:00",
+            },
+            // 모레
+            {
+              slotId: 1421,
+              startTime: "2025-11-22T09:00:00",
+              endTime: "2025-11-22T09:30:00",
+            },
+          ],
           specialty: "웹개발, 클라우드",
           office: "공학관 202호",
         },
@@ -199,7 +320,7 @@ export default function StudentMainPage() {
             )}
             {professors.map((prof) => (
               <ProfessorCard
-                key={prof.professorId || prof.id}
+                key={prof.professorId}
                 professor={prof}
                 type="list"
                 onOpenModal={handleOpenAppointmentModal}
