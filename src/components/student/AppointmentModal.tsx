@@ -9,7 +9,21 @@ import {
 } from "../../shared/calendar";
 import { Professor } from "./ProfessorCard";
 
-// --- 컴포넌트가 받을 Props 타입 정의 ---
+// =============================================
+// AppointmentModal.tsx
+// 면담(예약) 생성 모달
+// 기능 개요:
+// 1) 교수 availableSlots를 날짜/시간별로 매핑하여 선택 가능 시간 표시
+// 2) 간단한 월 캘린더에서 날짜 선택 (과거 날짜 비활성)
+// 3) 표준 오전/오후 시간 버튼: 없는 슬롯은 disabled 회색 처리
+// 4) 선택한 슬롯 + 면담 주제 + 메시지를 POST (현재 mock 형태)
+// TODO:
+// - 학생 이름/학번: 로그인 사용자 정보 자동 주입으로 교체
+// - 예약 성공 후 상위 목록(내 예약 현황) 새로고침 트리거 추가
+// - topic enum 확장 시 select 옵션 동기화 필요
+// =============================================
+
+// Props 타입: 모달 표시 여부, 닫기 콜백, 선택 교수
 interface AppointmentModalProps {
   show: boolean; // 모달을 보여줄지 말지 결정하는 boolean 값
   onClose: () => void; // 모달 닫기 함수
@@ -22,7 +36,7 @@ export default function AppointmentModal({
   onClose,
   professor,
 }: AppointmentModalProps) {
-  // --- 상태 관리 ---
+  // 상태 관리
   const [currentDate, setCurrentDate] = useState(new Date()); // 현재 표시 월 (1일 기준)
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null); // ISO 문자열로 선택 날짜
   const [selectedTime, setSelectedTime] = useState<string | null>(null); // 사용자가 선택한 시간 (토글을 위해 null 가능)
@@ -30,11 +44,12 @@ export default function AppointmentModal({
   const [topic, setTopic] = useState(""); // 면담 주제 (API의 topic enum: CAREER, EMPLOYMENT)
   const [studentMessage, setStudentMessage] = useState(""); // 교수에게 보낼 메시지
 
-  // 표준 시간 슬롯 정의
+  // 표준 시간 슬롯 정의 (UI 고정 세트)
   const MORNING_TIMES = ["09:00", "10:00", "11:00"]; // 필요시 확장
   const AFTERNOON_TIMES = ["13:00", "14:00", "15:00", "16:00", "17:00"]; // 필요시 확장
 
-  // 교수 상세 데이터의 availableSlots를 날짜/시간 기준으로 매핑
+  // 교수 availableSlots를 날짜/시간 -> slotId 형태로 변환
+  // 구조: { 'YYYY-MM-DD': { 'HH:MM': slotId } }
   const slotMapByDate: Record<string, Record<string, number>> = useMemo(() => {
     const map: Record<string, Record<string, number>> = {};
     if (professor?.availableSlots) {
@@ -48,19 +63,19 @@ export default function AppointmentModal({
     return map;
   }, [professor]);
 
-  // 캘린더 계산
+  // 현재 표시 월 기반 캘린더 데이터 구성
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth(); // 0-11
   const calendarDates = buildCalendarDates(year, month);
   const today = new Date();
   today.setHours(0, 0, 0, 0); // 오늘 날짜의 자정
 
-  // show prop이 false면 아무것도 렌더링하지 않음
+  // 모달 표시 조건 검증
   if (!show || !professor) {
     return null;
   }
 
-  // --- 이벤트 핸들러 ---
+  // 날짜 클릭: 다른 달(muted) 셀 클릭 시 해당 달 전환 후 선택
   const handleDateClick = (dateKey: string, muted: boolean) => {
     const dateObj = parseIsoDate(dateKey);
     if (dateObj < today) return;
@@ -76,7 +91,9 @@ export default function AppointmentModal({
     // TODO: 날짜별 가능 시간 재조회 로직 추가
   };
 
-  /** 시간 버튼 토글 함수 */
+  /** 시간 버튼 토글
+   * 이미 선택된 시간 재클릭 시 선택 해제
+   */
   const handleTimeClick = (time: string, slotId: number) => {
     // 만약 이미 선택된 시간을 다시 클릭했다면,
     if (selectedTime === time) {
@@ -89,6 +106,7 @@ export default function AppointmentModal({
     }
   };
 
+  // 월 이동 네비게이션
   const handleMonthChange = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate);
     newDate.setMonth(
@@ -101,18 +119,19 @@ export default function AppointmentModal({
     setSelectedSlotId(null); // 선택된 슬롯 ID 초기화
   };
 
+  // 예약 신청 (POST) 핸들러
   const handleSubmit = async () => {
     if (!selectedSlotId || !topic) {
       alert("날짜, 시간, 면담 주제를 모두 선택해주세요.");
       return;
     }
 
-    // API 명세서에 맞춰 데이터 구성
+    // API 명세서에 맞춘 요청 바디 (studentId camelCase, slotId, topic, studentMessage)
     const appointmentData = {
-      student_id: 2020123456, // TODO: 실제 로그인된 학생 ID로 교체해야 함
+      studentId: 2020123456, // TODO: 실제 로그인된 학생 ID로 교체
       slotId: selectedSlotId,
-      topic: topic, // "CAREER" 또는 "EMPLOYMENT"
-      studentMessage: studentMessage,
+      topic: topic,
+      studentMessage: studentMessage || undefined,
     };
 
     try {
@@ -132,7 +151,7 @@ export default function AppointmentModal({
     }
   };
 
-  // 모달 오버레이 클릭 시 닫기 (모달 컨텐츠 클릭 시에는 닫히지 않도록 stopPropagation)
+  // 오버레이 클릭 시 닫기 / 내부 클릭 시 버블링 중단
   const handleOverlayClick = () => {
     onClose();
   };
