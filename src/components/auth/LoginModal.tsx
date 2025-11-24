@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./LoginModal.css";
 import logo from "../../assets/SooMung.webp";
-
-type Role = "student" | "professor" | "admin";
+import type { Role } from "../../api/auth";
+/*type Role = "student" | "professor" | "admin";*/
 
 export type LoginModalProps = {
   open: boolean;
