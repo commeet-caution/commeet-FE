@@ -1,0 +1,181 @@
+/* ==========================
+   Light Theme (Default)
+========================== */
+
+:root {
+  /* Primary / Accent */
+  --color-primary: #1d4ed8;
+  --color-primary-soft: #e0edff;
+  --color-primary-soft-alt: #eef2ff;
+  --color-primary-on: #1d4ed8;
+
+  /* Background */
+  --bg-page: #f2f4fb;
+  --bg-surface: #ffffff;
+  --bg-surface-soft: #fbfcff;
+  --bg-surface-alt: #f6f8fd;
+  --bg-surface-alt2: #f9fbff;
+  --bg-chip: #f3f4f6;
+
+  /* Text */
+  --text-main: #101828;
+  --text-sub: #6b7285;
+  --text-weak: #374151;
+  --text-muted: #94a3b8;
+  --text-strong: #121327;
+  --text-on-primary: #ffffff;
+
+  /* Border */
+  --border-subtle: #edf0f7;
+  --border-soft: #d7dbe8;
+  --border-strong: #d0d7f5;
+  --border-primary-soft: rgba(29, 78, 216, 0.15);
+
+  /* Calendar */
+  --calendar-bg: #fbfcff;
+  --calendar-header-text: #121327;
+  --calendar-day-label: #94a3b8;
+  --calendar-date: #1f2937;
+  --calendar-date-muted: #cbd5e1;
+  --calendar-date-active-bg: #e0edff;
+  --calendar-date-active-text: #1d4ed8;
+  --calendar-nav-bg: #ffffff;
+  --calendar-nav-text: #3b4a6b;
+
+  /* Time Slot */
+  --time-slot-bg: #f3f4f6;
+  --time-slot-text: #1f2937;
+  --time-slot-active-bg: #1d4ed8;
+  --time-slot-active-text: #ffffff;
+
+  /* Pills */
+  --pill-success-bg: #dcfce7;
+  --pill-success-text: #166534;
+  --pill-warning-bg: #fef3c7;
+  --pill-warning-text: #92400e;
+  --pill-info-bg: #e0e7ff;
+  --pill-info-text: #312e81;
+
+  /* Avatar */
+  --avatar-bg-from: #4f46e5;
+  --avatar-bg-to: #2563eb;
+  --avatar-text: #ffffff;
+
+  /* Summary Cards */
+  --summary-bg: #ffffff;
+  --summary-label: #6b7285;
+  --summary-value: #111827;
+
+  --summary-icon-bg: #eef2ff;
+  --summary-icon-text: #4338ca;
+  --summary-icon-orange-bg: #fff7ed;
+  --summary-icon-orange-text: #c2410c;
+  --summary-icon-blue-bg: #eff6ff;
+  --summary-icon-blue-text: #1d4ed8;
+
+  /* Buttons */
+  --ghost-btn-bg: #ffffff;
+  --ghost-btn-border: #d0d7f5;
+  --ghost-btn-text: #1d4ed8;
+
+  --chip-bg: #f2f4fb;
+  --chip-text: #1d4ed8;
+
+  /* Misc */
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 8px 24px rgba(15, 35, 95, 0.05);
+}
+
+/* ==========================
+   Dark Theme
+========================== */
+
+[data-theme="dark"] {
+  /* Primary */
+  --color-primary: #60a5fa;
+  --color-primary-soft: rgba(37, 99, 235, 0.24);
+  --color-primary-soft-alt: rgba(129, 140, 248, 0.24);
+  --color-primary-on: #e5f0ff;
+
+  /* Background */
+  --bg-page: #020617;
+  --bg-surface: #020617;
+  --bg-surface-soft: #020617;
+  --bg-surface-alt: #020617;
+  --bg-surface-alt2: #020617;
+  --bg-chip: #111827;
+
+  /* Text */
+  --text-main: #e5e7eb;
+  --text-sub: #9ca3af;
+  --text-weak: #6b7280;
+  --text-muted: #64748b;
+  --text-strong: #f9fafb;
+  --text-on-primary: #0b1120;
+
+  /* Border */
+  --border-subtle: #1f2937;
+  --border-soft: #1e293b;
+  --border-strong: #334155;
+  --border-primary-soft: rgba(59, 130, 246, 0.5);
+
+  /* Calendar */
+  --calendar-bg: #020617;
+  --calendar-header-text: #e5e7eb;
+  --calendar-day-label: #64748b;
+  --calendar-date: #cbd5f5;
+  --calendar-date-muted: #475569;
+  --calendar-date-active-bg: rgba(37, 99, 235, 0.3);
+  --calendar-date-active-text: #e5f0ff;
+  --calendar-nav-bg: #020617;
+  --calendar-nav-text: #cbd5f5;
+
+  /* Time Slot */
+  --time-slot-bg: #020617;
+  --time-slot-text: #e5e7eb;
+  --time-slot-active-bg: #2563eb;
+  --time-slot-active-text: #e5f0ff;
+
+  /* Pills */
+  --pill-success-bg: rgba(22, 163, 74, 0.18);
+  --pill-success-text: #bbf7d0;
+  --pill-warning-bg: rgba(245, 158, 11, 0.2);
+  --pill-warning-text: #fed7aa;
+  --pill-info-bg: rgba(129, 140, 248, 0.25);
+  --pill-info-text: #e0e7ff;
+
+  /* Avatar */
+  --avatar-bg-from: #4f46e5;
+  --avatar-bg-to: #2563eb;
+  --avatar-text: #f9fafb;
+
+  /* Summary Cards */
+  --summary-bg: #020617;
+  --summary-label: #9ca3af;
+  --summary-value: #e5e7eb;
+
+  --summary-icon-bg: rgba(79, 70, 229, 0.22);
+  --summary-icon-text: #e0e7ff;
+  --summary-icon-orange-bg: rgba(248, 153, 72, 0.2);
+  --summary-icon-orange-text: #fed7aa;
+  --summary-icon-blue-bg: rgba(59, 130, 246, 0.22);
+  --summary-icon-blue-text: #bfdbfe;
+
+  /* Buttons */
+  --ghost-btn-bg: #020617;
+  --ghost-btn-border: #1e293b;
+  --ghost-btn-text: #bfdbfe;
+
+  --chip-bg: rgba(37, 99, 235, 0.16);
+  --chip-text: #bfdbfe;
+
+  /* Misc */
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.85);
+}
