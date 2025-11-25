@@ -48,6 +48,8 @@ export default function ProfessorCard({
         <div>
           <h3 className="prof-card-inner__name">{professor.name}</h3>
           <p className="prof-card-inner__department">{professor.department}</p>
+          <p className="prof-card-inner__department">{professor.email}</p>
+          {/* <p className="prof-card-inner__department">{professor.profileContent}</p> */}
         </div>
         {/* 즐겨찾기 기능 주석처리 */}
         {/* {type === "list" && (

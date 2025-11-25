@@ -9,6 +9,9 @@ import {
 } from "../../shared/calendar";
 import { Professor } from "./ProfessorCard";
 
+// 세션 인증을 위해 axios가 항상 쿠키를 포함하도록 설정
+axios.defaults.withCredentials = true;
+
 // =============================================
 // AppointmentModal.tsx
 // 면담(예약) 생성 모달
@@ -135,13 +138,9 @@ export default function AppointmentModal({
     };
 
     try {
-      // API 호출 (엔드포인트는 예시입니다. 실제 주소로 변경하세요)
-      const response = await axios.post("/api/appointments/", appointmentData, {
-        headers: {
-          Authorization: "Bearer {JWT}", // TODO: 실제 JWT 토큰으로 교체해야 합니다.
-        },
+      await axios.post("/api/appointments/", appointmentData, {
+        withCredentials: true,
       });
-      console.log("면담 예약 성공:", response.data);
       alert("면담 예약이 성공적으로 완료되었습니다.");
       onClose(); // 모달 닫기
       // TODO: 예약 완료 후, '내 예약 현황' 목록을 새로고침하는 로직 호출

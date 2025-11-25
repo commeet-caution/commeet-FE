@@ -1,12 +1,15 @@
 // =============================================
 import React from "react";
-import axios from "axios"; // 또는 이전에 만든 axiosInstance
+import axios from "axios";
 import "./StudentMain.css";
 import ProfessorCard, {
   Professor,
 } from "../../components/student/ProfessorCard"; // Professor 타입 import
 import ReservationItem from "../../components/student/ReservationItem";
 import AppointmentModal from "../../components/student/AppointmentModal";
+
+// 세션 쿠키를 항상 포함하도록 axios 기본값 설정
+axios.defaults.withCredentials = true;
 
 // const favoriteProfessors: Professor[] = [
 //   { id: 1, name: "김교수", major: "컴퓨터공학과", isFavorite: true },
@@ -38,7 +41,7 @@ export default function StudentMainPage() {
 
       const response = await axios.get("/api/professors", {
         params,
-        // headers: { Authorization: `Bearer ${token}` } // TODO: 인증 토큰 추가
+        withCredentials: true,
       });
 
       setProfessors(response.data || []);
@@ -102,13 +105,13 @@ export default function StudentMainPage() {
   ];
 
   // fetchAppointments: 학생의 예약 목록을 불러옴
-  const STUDENT_ID = 301; // TODO: 로그인 사용자 ID로 치환
+  const STUDENT_ID = 2020123456; // TODO: 로그인 사용자 ID로 치환
   const fetchAppointments = React.useCallback(async () => {
     setAppointmentsLoading(true);
     setAppointmentsError(null);
     try {
       const res = await axios.get(`/api/appointments/student/${STUDENT_ID}`, {
-        // headers: { Authorization: `Bearer ${token}` } // TODO: 인증 토큰 추가
+        withCredentials: true,
       });
       setAppointments(res.data || []);
     } catch (e: any) {
@@ -157,10 +160,20 @@ export default function StudentMainPage() {
     if (!window.confirm("정말로 예약을 취소하시겠습니까?")) {
       return;
     }
+
+    const reason = window.prompt("취소 사유를 입력해주세요. (선택)", "");
+
     try {
-      await axios.delete(`/api/appointments/${appointmentId}`, {
-        // headers: { Authorization: `Bearer ${token}` } // TODO: 실제 토큰 주입
-      });
+      await axios.patch(
+        `/api/appointments/${appointmentId}/cancel`,
+        {
+          userId: STUDENT_ID,
+          reason: reason?.trim() ? reason.trim() : undefined,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       alert("예약이 성공적으로 취소되었습니다.");
       fetchAppointments(); // 예약 목록 새로고침
     } catch (e: any) {
