@@ -1,5 +1,7 @@
 // src/api/auth.ts
+import { useState } from "react";
 import { apiFetch } from "./client";
+import type { User } from "../shared/user";
 
 // LoginModal / Header에서 함께 쓸 역할 타입
 export type Role = "student" | "professor" | "admin";
@@ -26,40 +28,54 @@ export interface RegisterParams {
   name: string;
 }
 
-// 1) 로그인
-export async function loginApi(params: LoginParams): Promise<LoginUser> {
-  // curl 예시와 동일하게 form-urlencoded로 전송
-  const formBody = new URLSearchParams();
-  formBody.append("loginId", String(params.id)); // 서버가 받는 필드 이름
-  formBody.append("password", params.password);
+export type useAuthReturn = {
+  user: User | undefined;
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+  loginApi: (params: LoginParams) => Promise<LoginUser>;
+  registerApi: (params: RegisterParams) => Promise<LoginUser>;
+  logoutApi: () => Promise<void>;
+};
 
-  return apiFetch<LoginUser>("/api/login", {
-    method: "POST",
-    body: formBody,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
-}
+export function useAuth(): useAuthReturn {
+  const [user, setUser] = useState<User | undefined>(undefined);
 
-// 2) 회원가입 (엔드포인트 준비되면 사용)
-export async function registerApi(params: RegisterParams): Promise<LoginUser> {
-  const payload = {
-    id: params.id,
-    password: params.password,
-    name: params.name,
-    role: params.role,
-  };
+  // 1) 로그인
+  async function loginApi(params: LoginParams): Promise<LoginUser> {
+    // curl 예시와 동일하게 form-urlencoded로 전송
+    const formBody = new URLSearchParams();
+    formBody.append("loginId", String(params.id)); // 서버가 받는 필드 이름
+    formBody.append("password", params.password);
 
-  return apiFetch<LoginUser>("/api/register", {
-    method: "POST",
-    body: payload, // 이쪽은 계속 JSON 전송
-  });
-}
+    return apiFetch<LoginUser>("/api/login", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+  }
 
-// 3) 로그아웃
-export async function logoutApi(): Promise<void> {
-  await apiFetch<void>("/api/logout", {
-    method: "POST",
-  });
+  // 2) 회원가입 (엔드포인트 준비되면 사용)
+  async function registerApi(params: RegisterParams): Promise<LoginUser> {
+    const payload = {
+      id: params.id,
+      password: params.password,
+      name: params.name,
+      role: params.role,
+    };
+
+    return apiFetch<LoginUser>("/api/register", {
+      method: "POST",
+      body: payload, // 이쪽은 계속 JSON 전송
+    });
+  }
+
+  // 3) 로그아웃
+  async function logoutApi(): Promise<void> {
+    await apiFetch<void>("/api/logout", {
+      method: "POST",
+    });
+  }
+
+  return { user, setUser, loginApi, registerApi, logoutApi };
 }

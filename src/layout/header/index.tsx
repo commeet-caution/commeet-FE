@@ -5,16 +5,11 @@ import LoginModal from "../../components/auth/LoginModal";
 import type { User } from "../../shared/user";
 
 // 🔽 추가: 로그인/로그아웃 API, 타입 import
-import {
-  loginApi,
-  logoutApi,
-  type Role,
-  type LoginUser,
-} from "../../api/auth";
+import { type Role, type LoginUser, useAuth } from "../../api/auth";
 
 export default function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const { user, setUser, loginApi, logoutApi } = useAuth();
 
   const items = [
     {
@@ -114,4 +109,3 @@ export default function Header() {
     </>
   );
 }
-
