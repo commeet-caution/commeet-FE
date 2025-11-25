@@ -1,5 +1,8 @@
 /* .prof-card 기본 스타일은 공통 파일에서 정의됩니다 */
 
+/* .prof-page {
+} */
+
 .prof-card--compact {
   padding: 24px;
 }
@@ -37,32 +40,34 @@
   gap: 24px;
 }
 
-.availability-card__calendar {
+/* 캘린더 영역 */
+
+.prof-calendar {
   border: 1px solid #edf0f7;
   border-radius: 16px;
   padding: 20px;
   background: #fbfcff;
 }
 
-.calendar__header {
+.prof-calendar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
 
-.calendar__month {
+.prof-calendar__month {
   font-size: 18px;
   font-weight: 700;
   color: #121327;
 }
 
-.calendar__controls {
+.prof-calendar__controls {
   display: flex;
   gap: 8px;
 }
 
-.calendar__button {
+.prof-calendar__button {
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -73,53 +78,55 @@
   cursor: pointer;
 }
 
-.calendar__grid {
+.prof-calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   text-align: center;
 }
 
-.calendar__day-label {
+.prof-calendar__day-label {
   font-size: 13px;
   font-weight: 600;
   color: #94a3b8;
 }
 
-.calendar__date {
+.prof-calendar__date {
   font-size: 14px;
   color: #1f2937;
   padding: 10px 0;
   border-radius: 12px;
 }
 
-.calendar__date--muted {
+.prof-calendar__date--muted {
   color: #cbd5e1;
 }
 
-.calendar__date--active {
+.prof-calendar__date--active {
   background: #e0edff;
   color: #1d4ed8;
   font-weight: 700;
 }
 
-.availability-card__times {
+/* 시간 선택 영역 */
+
+.prof-times {
   margin-top: 20px;
 }
 
-.availability-card__caption {
+.prof-times__caption {
   font-size: 14px;
   color: #6b7285;
   margin: 0 0 12px;
 }
 
-.time-grid {
+.prof-time-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: 10px;
 }
 
-.time-slot {
+.prof-time-slot {
   padding: 12px 0;
   border-radius: 12px;
   background: #f3f4f6;
@@ -128,12 +135,12 @@
   text-align: center;
 }
 
-.time-slot--highlight {
+.prof-time-slot--highlight {
   background: #1d4ed8;
   color: #fff;
 }
 
-.availability-card__footer {
+.prof-times__footer {
   margin-top: 18px;
   font-size: 13px;
   color: #6b7285;
@@ -143,7 +150,25 @@
   gap: 12px;
 }
 
-.weekly-summary__list {
+/* pill 기본 스타일은 공통 파일(.pill)에서 가져와서 .prof-pill로 마이그레이션 필요 */
+.prof-pill--success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.prof-pill--warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.prof-pill--info {
+  background: #e0e7ff;
+  color: #312e81;
+}
+
+/* 이번 주 요약 */
+
+.prof-weekly-summary__list {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -152,7 +177,7 @@
   list-style: none;
 }
 
-.weekly-summary__item {
+.prof-weekly-summary__item {
   background: #f6f8fd;
   padding: 16px;
   border-radius: 14px;
@@ -161,29 +186,29 @@
   align-items: center;
 }
 
-.weekly-summary__label {
+.prof-weekly-summary__label {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.weekly-summary__date {
+.prof-weekly-summary__date {
   font-size: 15px;
   font-weight: 600;
   color: #101828;
 }
 
-.weekly-summary__meta {
+.prof-weekly-summary__meta {
   font-size: 13px;
   color: #6b7285;
 }
 
-.weekly-summary__times {
+.prof-weekly-summary__times {
   display: flex;
   gap: 10px;
 }
 
-.weekly-summary__time-badge {
+.prof-weekly-summary__time-badge {
   min-width: 48px;
   padding: 8px 12px;
   border-radius: 999px;
@@ -195,13 +220,15 @@
   box-shadow: inset 0 0 0 1px rgba(29, 78, 216, 0.15);
 }
 
-.request-list {
+/* 면담 요청 리스트 */
+
+.prof-request-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.request-item {
+.prof-request-item {
   background: #f9fbff;
   border-radius: 14px;
   padding: 18px 20px;
@@ -211,13 +238,13 @@
   align-items: center;
 }
 
-.request-item__student {
+.prof-request-item__student {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.avatar {
+.prof-avatar {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -230,25 +257,25 @@
   font-size: 18px;
 }
 
-.student-info {
+.prof-student-info {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.student-info__name {
+.prof-student-info__name {
   font-size: 16px;
   font-weight: 600;
   margin: 0;
   color: #101828;
 }
 
-.student-info__id {
+.prof-student-info__id {
   font-size: 13px;
   color: #6b7285;
 }
 
-.student-info__topic {
+.prof-student-info__topic {
   font-size: 14px;
   color: #1f2937;
   padding: 10px 12px;
@@ -258,30 +285,30 @@
   font-weight: 500;
 }
 
-.request-item__meta {
+.prof-request-item__meta {
   display: grid;
   gap: 8px;
 }
 
-.meta-row {
+.prof-meta-row {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
   color: #374151;
 }
 
-.meta-row strong {
+.prof-meta-row strong {
   color: #0f172a;
 }
 
-.request-item__actions {
+.prof-request-item__actions {
   display: flex;
   gap: 10px;
   margin-top: 16px;
   justify-content: flex-end;
 }
 
-.ghost-button {
+.prof-ghost-button {
   padding: 10px 16px;
   border-radius: 12px;
   border: 1px solid #d0d7f5;
@@ -291,30 +318,15 @@
   cursor: pointer;
 }
 
-/* .pill 기본 스타일은 공통 파일에 존재 */
+/* 요약 카드 스트립 */
 
-.pill--success {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.pill--warning {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.pill--info {
-  background: #e0e7ff;
-  color: #312e81;
-}
-
-.summary-strip {
+.prof-summary-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
 }
 
-.summary-card {
+.prof-summary-card {
   background: #ffffff;
   border-radius: 18px;
   padding: 18px 22px;
@@ -324,24 +336,24 @@
   box-shadow: 0 8px 24px rgba(15, 35, 95, 0.05);
 }
 
-.summary-card__info {
+.prof-summary-card__info {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.summary-card__label {
+.prof-summary-card__label {
   font-size: 14px;
   color: #6b7285;
 }
 
-.summary-card__value {
+.prof-summary-card__value {
   font-size: 24px;
   font-weight: 700;
   color: #111827;
 }
 
-.summary-card__icon {
+.prof-summary-card__icon {
   width: 50px;
   height: 50px;
   border-radius: 16px;
@@ -353,36 +365,38 @@
   color: #4338ca;
 }
 
-.summary-card__icon--orange {
+.prof-summary-card__icon--orange {
   background: #fff7ed;
   color: #c2410c;
 }
 
-.summary-card__icon--blue {
+.prof-summary-card__icon--blue {
   background: #eff6ff;
   color: #1d4ed8;
 }
+
+/* 반응형 */
 
 @media (max-width: 1024px) {
   .prof-main__top {
     grid-template-columns: 1fr;
   }
 
-  .request-item {
+  .prof-request-item {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .time-grid {
+  .prof-time-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 
-  .request-item__actions {
+  .prof-request-item__actions {
     justify-content: stretch;
   }
 
-  .ghost-button {
+  .prof-ghost-button {
     flex: 1;
     text-align: center;
   }
