@@ -196,11 +196,15 @@ const CardNav: React.FC<CardNavProps> = ({
           {user ? (
             <div className="card-nav-user">
               <Link
-                to="/mypage"
+                to={
+                  user.role === "professor"
+                    ? "/projects/profMain"
+                    : "/projects/studentMain"
+                }
                 className="profile-chip"
                 aria-label="내 프로필로 이동"
               >
-                <span className="primitive">{user.name.charAt(0)}</span>
+                <span className="primitive">{user.name}</span>
                 <div className="profile-meta">
                   <span className="name">{user.name}</span>
                   {user.userId && <span className="id">{user.userId}</span>}

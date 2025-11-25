@@ -73,6 +73,7 @@ export default function Header() {
       const newUser: User = {
         userId: loginUser.userId,
         name: loginUser.name,
+        role: loginUser.role,
         grade: 1, // 아직 서버에서 안 온다면 임시 값 (필요시 수정)
         attendanceItems: [],
       };
