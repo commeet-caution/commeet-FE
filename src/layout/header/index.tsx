@@ -9,6 +9,7 @@ import { type Role, type LoginUser, useAuth } from "../../api/auth";
 
 export default function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
+  // 커스텀 훅
   const { user, setUser, loginApi, logoutApi } = useAuth();
 
   const items = [
