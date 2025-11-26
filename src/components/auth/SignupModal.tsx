@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import "./LoginModal.css";
 import logo from "../../assets/SooMung.webp";
 import type { Role, RegisterParams } from "../../api/auth";
-import { signUpApi } from "../../api/auth";
+import { useAuth } from "../../api/auth";
 
 type SignupModalProps = {
   open: boolean;
@@ -27,10 +27,11 @@ export default function SignupModal({
     department: "컴퓨터과학전공",
   });
   const [loading, setLoading] = useState(false);
+  const { signUpApi } = useAuth();
 
   // 🔥 defaultRole이 바뀌면 form.role도 자동 변경
   useEffect(() => {
-    setForm(prev => ({ ...prev, role: defaultRole }));
+    setForm((prev) => ({ ...prev, role: defaultRole }));
   }, [defaultRole]);
 
   if (!open) return null;
@@ -137,11 +138,7 @@ export default function SignupModal({
             />
           </label>
 
-          <button
-            type="submit"
-            className="login-submit-btn"
-            disabled={loading}
-          >
+          <button type="submit" className="login-submit-btn" disabled={loading}>
             {loading ? "가입 중..." : "회원가입"}
           </button>
 
@@ -158,4 +155,3 @@ export default function SignupModal({
     document.body
   );
 }
-

@@ -4,42 +4,77 @@ import {
   useEffect,
   useState,
   useMemo,
+  useContext,
   createElement,
 } from "react";
-import { apiFetch } from "./client";
+// import { apiFetch } from "./client";
+import axios from "axios";
 import type { User } from "../shared/user";
 
-// 프론트에서 쓰는 역할 타입
+/**
+ * 프론트엔드에서 사용하는 사용자 역할 타입
+ * @typedef {"student" | "professor" | "admin"} Role
+ */
 export type Role = "student" | "professor" | "admin";
 
-// 서버에 보내는 역할 타입
+/**
+ * 서버로 전달하는 역할 타입
+ * @typedef {"ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN"} ServerRole
+ */
 export type ServerRole = "ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN";
 
-// 서버에서 로그인 성공 시 내려줄 정보 (예시)
+/**
+ * 로그인 성공 시 서버에서 내려주는 사용자 정보
+ * @typedef {Object} LoginUser
+ * @property {number} userId - 사용자 고유 ID
+ * @property {string} name - 이름
+ * @property {Role} role - 역할
+ */
 export interface LoginUser {
   userId: number;
   name: string;
   role: Role;
 }
 
-// LoginModal -> Header -> API로 전달되는 로그인 파라미터
+/**
+ * 로그인 요청에 필요한 파라미터
+ * @typedef {Object} LoginParams
+ * @property {Role} role - 사용자 역할
+ * @property {number} id - 학번/교번/관리자 ID
+ * @property {string} password - 비밀번호
+ */
 export interface LoginParams {
   role: Role;
-  id: number; // 학번 / 교번 / 관리자 ID
+  id: number;
   password: string;
 }
 
-// 회원가입 시 프론트에서 모을 파라미터
+/**
+ * 회원가입에 필요한 파라미터
+ * @typedef {Object} RegisterParams
+ * @property {Role} role
+ * @property {number} id
+ * @property {string} password
+ * @property {string} name
+ * @property {string} university
+ * @property {string} department
+ */
 export interface RegisterParams {
-  role: Role; // "student" | "professor" | "admin"
-  id: number; // 학번
+  role: Role;
+  id: number;
   password: string;
   name: string;
   university: string;
   department: string;
 }
 
-// Role → ServerRole 매핑 함수
+/**
+ * Role → ServerRole 변환 함수
+ * 서버 API 호출 시 필요한 형태로 변환합니다.
+ *
+ * @param {Role} role - 프론트 역할
+ * @returns {ServerRole} 서버용 역할 코드
+ */
 function toServerRole(role: Role): ServerRole {
   switch (role) {
     case "student":
@@ -55,13 +90,27 @@ export type useAuthReturn = {
   user: User | undefined;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
   loginApi: (params: LoginParams) => Promise<LoginUser>;
-  registerApi: (params: RegisterParams) => Promise<LoginUser>;
+  signUpApi: (params: RegisterParams) => Promise<void>;
   logoutApi: () => Promise<void>;
 };
 
 const AuthContext = createContext<useAuthReturn | null>(null);
 const STORAGE_KEY = "auth:user";
 
+/**
+ * AuthProvider
+ * 전역적으로 인증 상태(user)와 로그인/회원가입/로그아웃 API를 제공하는 Provider입니다.
+ *
+ * @example
+ * ```tsx
+ * <AuthProvider>
+ *   <App />
+ * </AuthProvider>
+ * ```
+ *
+ * @param {Object} props
+ * @param {ReactNode} props.children - Provider가 감쌀 React 노드
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>(() => {
     try {
@@ -72,23 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   });
 
-  // 초기 렌더링 시 서버 세션이 있으면 사용자 정보를 복원
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const me = await apiFetch<User>("/api/me");
-        if (!cancelled) setUser(me);
-      } catch {
-        // 세션이 없거나 만료된 경우에는 무시
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // user 상태를 로컬 스토리지에 동기화
+  /**
+   * user 상태가 변할 때마다 localStorage에 동기화
+   */
   useEffect(() => {
     if (user) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
@@ -97,80 +132,109 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  // 1) 로그인
+  /**
+   * 로그인 API
+   *
+   * @async
+   * @function loginApi
+   * @param {LoginParams} params - 로그인 데이터
+   * @returns {Promise<LoginUser>} 로그인 성공 시 사용자 정보
+   *
+   * @example
+   * ```ts
+   * const { loginApi, setUser } = useAuth();
+   * const user = await loginApi({ role: "student", id: 20230001, password: "1234" });
+   * setUser(user);
+   * ```
+   */
   async function loginApi(params: LoginParams): Promise<LoginUser> {
-    // curl 예시와 동일하게 form-urlencoded로 전송
     const formBody = new URLSearchParams();
-    formBody.append("loginId", String(params.id)); // 서버에서 받는 필드 이름
+    formBody.append("loginId", String(params.id));
     formBody.append("password", params.password);
 
-    return apiFetch<LoginUser>("/api/login", {
-      method: "POST",
-      body: formBody,
+    const response = await axios.post<LoginUser>("/api/login", formBody, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
+
+    return response.data;
   }
 
-  // 2) 회원가입 (백엔드 준비되면 연결)
-  async function registerApi(params: RegisterParams): Promise<LoginUser> {
-    const payload = {
-      id: params.id,
+  /**
+   * 회원가입 API
+   *
+   * @async
+   * @function signUpApi
+   * @param {RegisterParams} params - 회원가입 정보
+   * @returns {Promise<void>}
+   */
+  async function signUpApi(params: RegisterParams): Promise<void> {
+    const body = {
+      loginId: String(params.id),
       password: params.password,
       name: params.name,
-      role: params.role,
+      university: params.university,
+      department: params.department,
+      role: toServerRole(params.role),
     };
 
-    return apiFetch<LoginUser>("/api/register", {
-      method: "POST",
-      body: payload, // 서버에서 JSON을 받도록 가정
+    const response = await axios.post<void>("/api/register", body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
+
+    return response.data;
   }
 
-  // 3) 로그아웃
+  /**
+   * 로그아웃 API
+   *
+   * @async
+   * @function logoutApi
+   * @returns {Promise<void>}
+   *
+   * @example
+   * ```ts
+   * const { logoutApi, setUser } = useAuth();
+   * await logoutApi();
+   * setUser(undefined);
+   * ```
+   */
   async function logoutApi(): Promise<void> {
-    await apiFetch<void>("/api/logout", {
-      method: "POST",
-    });
+    const response = await axios.post<void>("/api/logout");
+    return response.data;
   }
 
   const value = useMemo(
-    () => ({ user, setUser, loginApi, registerApi, logoutApi }),
+    () => ({ user, setUser, loginApi, signUpApi, logoutApi }),
     [user]
   );
+
   return createElement(AuthContext.Provider, { value }, children);
-  // return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// 2) 회원가입
-export async function signUpApi(params: RegisterParams): Promise<void> {
-  const body = {
-    loginId: String(params.id),
-    password: params.password,
-    name: params.name,
-    university: params.university,
-    department: params.department,
-    role: toServerRole(params.role), // "student" → "ROLE_STUDENT"
-  };
-
-  return apiFetch<void>("/api/register", {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-// src/api/auth.ts
-
-/* ... 위에 Role, ServerRole, LoginUser, LoginParams, RegisterParams,
-       toServerRole, loginApi, signUpApi 까지는 네가 보낸 그대로 두고 ... */
-
-// 3) 🔵 로그아웃 API (index.tsx에서 import 하는 함수)
-export async function logoutApi(): Promise<void> {
-  return apiFetch<void>("/api/logout", {
-    method: "POST",
-  });
+/**
+ * useAuth
+ * AuthProvider 내부 어디서든 호출할 수 있는 인증 전용 커스텀 훅입니다.
+ *
+ * @returns {useAuthReturn} 인증 상태와 API 함수들
+ * @throws {Error} AuthProvider 밖에서 호출했을 때 에러 발생
+ *
+ * @example
+ * ```ts
+ * const { user, loginApi, logoutApi } = useAuth();
+ *
+ * if (!user) {
+ *   await loginApi({ role: "student", id: 1, password: "1234" });
+ * }
+ * ```
+ */
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth는 AuthProvider 내부에서만 사용 가능합니다.");
+  }
+  return context;
 }
