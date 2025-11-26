@@ -45,7 +45,7 @@ export interface LoginUser {
  */
 export interface LoginParams {
   role: Role;
-  id: number;
+  id: string;
   password: string;
 }
 
@@ -149,9 +149,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   async function loginApi(params: LoginParams): Promise<LoginUser> {
     const formBody = new URLSearchParams();
-    formBody.append("loginId", String(params.id));
+    formBody.append("loginId", params.id);
     formBody.append("password", params.password);
-
     const response = await axios.post<LoginUser>("/api/login", formBody, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -171,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   async function signUpApi(params: RegisterParams): Promise<void> {
     const body = {
-      loginId: String(params.id),
+      loginId: params.id,
       password: params.password,
       name: params.name,
       university: params.university,

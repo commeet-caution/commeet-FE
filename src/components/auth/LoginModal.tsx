@@ -2,17 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./LoginModal.css";
 import logo from "../../assets/SooMung.webp";
-import type { Role } from "../../api/auth";
+import type { Role, LoginParams } from "../../api/auth";
 import SignupModal from "./SignupModal";
 
 export type LoginModalProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit?: (params: {
-    role: Role;
-    id: number;
-    password: string;
-  }) => void | Promise<void>;
+  onSubmit?: (params: LoginParams) => void | Promise<void>;
 };
 
 const roleLabels: Record<Role, string> = {
@@ -56,7 +52,7 @@ export default function LoginModal({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit?.({ role, id: Number(id), password });
+    await onSubmit?.({ role, id, password });
   };
 
   return (

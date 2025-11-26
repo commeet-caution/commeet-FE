@@ -5,7 +5,12 @@ import LoginModal from "../../components/auth/LoginModal";
 import type { User } from "../../shared/user";
 
 // 🔽 추가: 로그인/로그아웃 API, 타입 import
-import { type Role, type LoginUser, useAuth } from "../../api/auth";
+import {
+  type Role,
+  type LoginUser,
+  useAuth,
+  LoginParams,
+} from "../../api/auth";
 
 export default function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -56,15 +61,7 @@ export default function Header() {
   };
 
   // 🔁 수정: 가짜 유저 생성 → 로그인 API 연동
-  const handleLoginSubmit = async ({
-    role,
-    id,
-    password,
-  }: {
-    role: Role;
-    id: number;
-    password: string;
-  }) => {
+  const handleLoginSubmit = async ({ role, id, password }: LoginParams) => {
     try {
       // 1) 서버에 로그인 요청
       const loginUser: LoginUser = await loginApi({ role, id, password });
