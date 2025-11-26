@@ -201,7 +201,7 @@ const CardNav: React.FC<CardNavProps> = ({
             <div className="card-nav-user">
               <Link
                 to={
-                  user.role === "professor"
+                  user.role === "ROLE_PROFESSOR"
                     ? "/projects/profMain"
                     : "/projects/studentMain"
                 }

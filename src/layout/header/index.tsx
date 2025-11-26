@@ -75,6 +75,8 @@ export default function Header() {
         attendanceItems: [],
       };
 
+      console.log("✅ 로그인 성공:", newUser);
+
       setUser(newUser);
       setLoginOpen(false);
     } catch (e: any) {
