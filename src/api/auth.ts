@@ -1,20 +1,21 @@
-// src/api/auth.ts
 import {
   createContext,
-  createElement,
-  useContext,
+  ReactNode,
   useEffect,
-  useMemo,
   useState,
-  type ReactNode,
+  useMemo,
+  createElement,
 } from "react";
 import { apiFetch } from "./client";
 import type { User } from "../shared/user";
 
-// LoginModal / Header에서 함께 사용하는 역할 타입
+// 프론트에서 쓰는 역할 타입
 export type Role = "student" | "professor" | "admin";
 
-// 서버가 로그인 성공 시 내려주는 최소 사용자 정보
+// 서버에 보내는 역할 타입
+export type ServerRole = "ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN";
+
+// 서버에서 로그인 성공 시 내려줄 정보 (예시)
 export interface LoginUser {
   userId: number;
   name: string;
@@ -28,12 +29,26 @@ export interface LoginParams {
   password: string;
 }
 
-// 회원가입 시 필요한 정보 (백엔드 준비 시 사용)
+// 회원가입 시 프론트에서 모을 파라미터
 export interface RegisterParams {
-  role: Role;
-  id: number;
+  role: Role; // "student" | "professor" | "admin"
+  id: number; // 학번
   password: string;
   name: string;
+  university: string;
+  department: string;
+}
+
+// Role → ServerRole 매핑 함수
+function toServerRole(role: Role): ServerRole {
+  switch (role) {
+    case "student":
+      return "ROLE_STUDENT";
+    case "professor":
+      return "ROLE_PROFESSOR";
+    case "admin":
+      return "ROLE_ADMIN";
+  }
 }
 
 export type useAuthReturn = {
@@ -128,10 +143,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): useAuthReturn {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("AuthProvider로 감싼 뒤에 useAuth를 사용할 수 있습니다.");
-  }
-  return ctx;
+// 2) 회원가입
+export async function signUpApi(params: RegisterParams): Promise<void> {
+  const body = {
+    loginId: String(params.id),
+    password: params.password,
+    name: params.name,
+    university: params.university,
+    department: params.department,
+    role: toServerRole(params.role), // "student" → "ROLE_STUDENT"
+  };
+
+  return apiFetch<void>("/api/register", {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+// src/api/auth.ts
+
+/* ... 위에 Role, ServerRole, LoginUser, LoginParams, RegisterParams,
+       toServerRole, loginApi, signUpApi 까지는 네가 보낸 그대로 두고 ... */
+
+// 3) 🔵 로그아웃 API (index.tsx에서 import 하는 함수)
+export async function logoutApi(): Promise<void> {
+  return apiFetch<void>("/api/logout", {
+    method: "POST",
+  });
 }
