@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight, GoArrowRight, GoSignOut } from "react-icons/go";
 import "./CardNav.css";
+import characterAvatar from "../../assets/profile/사용자.png";
 
 type CardNavLink = {
   label: string;
@@ -167,6 +168,9 @@ const CardNav: React.FC<CardNavProps> = ({
   const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
     if (el) cardsRef.current[i] = el;
   };
+  //여기 추가
+  const displayName = user?.name ?? "사용자";
+  const initial = displayName.charAt(0);
 
   return (
     <div className={`card-nav-container ${className}`}>
@@ -200,7 +204,12 @@ const CardNav: React.FC<CardNavProps> = ({
                 className="profile-chip"
                 aria-label="내 프로필로 이동"
               >
-                <span className="primitive">{user.name.charAt(0)}</span>
+                <div className="avatar">
+                  <img 
+                  src={characterAvatar}
+                  alt={'${user.name} 프로필 이미지'}
+                  />
+                </div>
                 <div className="profile-meta">
                   <span className="name">{user.name}</span>
                   {user.userId && <span className="id">{user.userId}</span>}

@@ -1,8 +1,10 @@
-// src/api/auth.ts
 import { apiFetch } from "./client";
 
-// LoginModal / Header에서 함께 쓸 역할 타입
+// 프론트에서 쓰는 역할 타입
 export type Role = "student" | "professor" | "admin";
+
+// 서버에 보내는 역할 타입
+export type ServerRole = "ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN";
 
 // 서버에서 로그인 성공 시 내려줄 정보 (예시)
 export interface LoginUser {
@@ -18,12 +20,26 @@ export interface LoginParams {
   password: string;
 }
 
-// 회원가입 필요 시 사용 (일단 틀만 만들어 둠)
+// 회원가입 시 프론트에서 모을 파라미터
 export interface RegisterParams {
-  role: Role;
-  id: number;
+  role: Role;        // "student" | "professor" | "admin"
+  id: number;        // 학번
   password: string;
   name: string;
+  university: string;
+  department: string;
+}
+
+// Role → ServerRole 매핑 함수
+function toServerRole(role: Role): ServerRole {
+  switch (role) {
+    case "student":
+      return "ROLE_STUDENT";
+    case "professor":
+      return "ROLE_PROFESSOR";
+    case "admin":
+      return "ROLE_ADMIN";
+  }
 }
 
 // 1) 로그인
@@ -42,24 +58,34 @@ export async function loginApi(params: LoginParams): Promise<LoginUser> {
   });
 }
 
-// 2) 회원가입 (엔드포인트 준비되면 사용)
-export async function registerApi(params: RegisterParams): Promise<LoginUser> {
-  const payload = {
-    id: params.id,
+// 2) 회원가입
+export async function signUpApi(params: RegisterParams): Promise<void> {
+  const body = {
+    loginId: String(params.id),
     password: params.password,
     name: params.name,
-    role: params.role,
+    university: params.university,
+    department: params.department,
+    role: toServerRole(params.role),  // "student" → "ROLE_STUDENT"
   };
 
-  return apiFetch<LoginUser>("/api/register", {
+  return apiFetch<void>("/api/register", {
     method: "POST",
-    body: payload, // 이쪽은 계속 JSON 전송
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 }
 
-// 3) 로그아웃
+// src/api/auth.ts
+
+/* ... 위에 Role, ServerRole, LoginUser, LoginParams, RegisterParams,
+       toServerRole, loginApi, signUpApi 까지는 네가 보낸 그대로 두고 ... */
+
+// 3) 🔵 로그아웃 API (index.tsx에서 import 하는 함수)
 export async function logoutApi(): Promise<void> {
-  await apiFetch<void>("/api/logout", {
+  return apiFetch<void>("/api/logout", {
     method: "POST",
   });
 }
