@@ -55,6 +55,13 @@
   font-weight: 600;
 }
 
+/* 추가 변형 */
+.pill--danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 0.1px solid red;
+}
+
 @media (max-width: 768px) {
   .prof-main-page,
   .student-main-page {
