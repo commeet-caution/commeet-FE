@@ -62,7 +62,7 @@ export default function Header() {
     password,
   }: {
     role: Role;
-    id: number;
+    id: string;
     password: string;
   }) => {
     try {

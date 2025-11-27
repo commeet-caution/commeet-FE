@@ -10,7 +10,7 @@ export type LoginModalProps = {
   onClose: () => void;
   onSubmit?: (params: {
     role: Role;
-    id: number;
+    id: string;
     password: string;
   }) => void | Promise<void>;
 };
@@ -56,7 +56,7 @@ export default function LoginModal({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit?.({ role, id: Number(id), password });
+    await onSubmit?.({ role, id, password });
   };
 
   return (

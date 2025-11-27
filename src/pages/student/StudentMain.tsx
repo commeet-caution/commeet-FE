@@ -85,7 +85,7 @@ export default function StudentMainPage() {
   >(null);
 
   // fetchAppointments: 학생의 예약 목록을 불러옴
-  const STUDENT_ID = 7; // TODO: 로그인 사용자 ID로 치환
+  const STUDENT_ID = 8; // TODO: 로그인 사용자 ID로 치환
   const fetchAppointments = React.useCallback(async () => {
     setAppointmentsLoading(true);
     setAppointmentsError(null);

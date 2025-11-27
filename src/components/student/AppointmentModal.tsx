@@ -132,7 +132,7 @@ export default function AppointmentModal({
 
     // API 명세서에 맞춘 요청 바디 (studentId camelCase, slotId, topic, studentMessage)
     const appointmentData = {
-      studentId: 7, // TODO: 실제 로그인된 학생 ID로 교체
+      studentId: 8, // TODO: 실제 로그인된 학생 ID로 교체
       slotId: selectedSlotId,
       topic: topic,
       studentMessage: studentMessage || undefined,
