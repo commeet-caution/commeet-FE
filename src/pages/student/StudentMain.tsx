@@ -84,28 +84,8 @@ export default function StudentMainPage() {
     string | null
   >(null);
 
-  // MOCK_APPOINTMENTS: API 실패 시 보여줄 예시 데이터
-  const MOCK_APPOINTMENTS: AppointmentData[] = [
-    {
-      appointmentId: 1001,
-      studentName: "김학생",
-      professorName: "박교수",
-      startTime: "2025-11-10T14:00:00",
-      topic: "CAREER",
-      status: "PENDING",
-    },
-    {
-      appointmentId: 1005,
-      studentName: "김학생",
-      professorName: "이교수",
-      startTime: "2025-11-15T11:00:00",
-      topic: "EMPLOYMENT",
-      status: "COMPLETED",
-    },
-  ];
-
   // fetchAppointments: 학생의 예약 목록을 불러옴
-  const STUDENT_ID = 2020123456; // TODO: 로그인 사용자 ID로 치환
+  const STUDENT_ID = 7; // TODO: 로그인 사용자 ID로 치환
   const fetchAppointments = React.useCallback(async () => {
     setAppointmentsLoading(true);
     setAppointmentsError(null);
@@ -120,7 +100,6 @@ export default function StudentMainPage() {
         e.message ||
         "면담 목록을 불러오지 못했습니다.";
       setAppointmentsError(errorMessage);
-      setAppointments(MOCK_APPOINTMENTS); // 실패 시 모의 데이터 표시
     } finally {
       setAppointmentsLoading(false);
     }

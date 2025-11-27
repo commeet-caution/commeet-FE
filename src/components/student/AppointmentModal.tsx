@@ -124,6 +124,7 @@ export default function AppointmentModal({
 
   // 예약 신청 (POST) 핸들러
   const handleSubmit = async () => {
+    console.log("예약 신청:");
     if (!selectedSlotId || !topic) {
       alert("날짜, 시간, 면담 주제를 모두 선택해주세요.");
       return;
@@ -131,16 +132,17 @@ export default function AppointmentModal({
 
     // API 명세서에 맞춘 요청 바디 (studentId camelCase, slotId, topic, studentMessage)
     const appointmentData = {
-      studentId: 2020123456, // TODO: 실제 로그인된 학생 ID로 교체
+      studentId: 7, // TODO: 실제 로그인된 학생 ID로 교체
       slotId: selectedSlotId,
       topic: topic,
       studentMessage: studentMessage || undefined,
     };
 
     try {
-      await axios.post("/api/appointments/", appointmentData, {
+      const res = await axios.post("/api/appointments", appointmentData, {
         withCredentials: true,
       });
+      console.log("면담 예약 성공:", res.data);
       alert("면담 예약이 성공적으로 완료되었습니다.");
       onClose(); // 모달 닫기
       // TODO: 예약 완료 후, '내 예약 현황' 목록을 새로고침하는 로직 호출
