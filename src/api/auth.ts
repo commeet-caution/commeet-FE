@@ -15,13 +15,13 @@ import type { User } from "../shared/user";
  * 프론트엔드에서 사용하는 사용자 역할 타입
  * @typedef {"student" | "professor" | "admin"} Role
  */
-// export type Role = "student" | "professor" | "admin";
+export type Role = "student" | "professor" | "admin";
 
 /**
  * 서버로 전달하는 역할 타입
  * @typedef {"ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN"} ServerRole
  */
-export type Role = "ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN";
+export type ServerRole = "ROLE_STUDENT" | "ROLE_PROFESSOR" | "ROLE_ADMIN";
 
 /**
  * 로그인 성공 시 서버에서 내려주는 사용자 정보
@@ -73,18 +73,18 @@ export interface RegisterParams {
  * 서버 API 호출 시 필요한 형태로 변환합니다.
  *
  * @param {Role} role - 프론트 역할
- * @returns {Role} 서버용 역할 코드
+ * @returns {ServerRole} 서버용 역할 코드
  */
-// function toServerRole(role: Role): Role {
-//   switch (role) {
-//     case "student":
-//       return "ROLE_STUDENT";
-//     case "professor":
-//       return "ROLE_PROFESSOR";
-//     case "admin":
-//       return "ROLE_ADMIN";
-//   }
-// }
+function toServerRole(role: Role): ServerRole {
+  switch (role) {
+    case "student":
+      return "ROLE_STUDENT";
+    case "professor":
+      return "ROLE_PROFESSOR";
+    case "admin":
+      return "ROLE_ADMIN";
+  }
+}
 
 export type useAuthReturn = {
   user: User | undefined;
@@ -151,6 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const formBody = new URLSearchParams();
     formBody.append("loginId", params.id);
     formBody.append("password", params.password);
+
     const response = await axios.post<LoginUser>("/api/login", formBody, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -175,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: params.name,
       university: params.university,
       department: params.department,
-      role: params.role,
+      role: toServerRole(params.role),
     };
 
     const response = await axios.post<void>("/api/register", body, {
