@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./LoginModal.css";
 import logo from "../../assets/SooMung.webp";
-import type { Role } from "../../api/auth";
+import type { Role, LoginParams } from "../../api/auth";
 import SignupModal from "./SignupModal";
 
 export type LoginModalProps = {
@@ -16,9 +16,9 @@ export type LoginModalProps = {
 };
 
 const roleLabels: Record<Role, string> = {
-  student: "학생",
-  professor: "교수",
-  admin: "관리자",
+  ROLE_STUDENT: "학생",
+  ROLE_PROFESSOR: "교수",
+  ROLE_ADMIN: "관리자",
 };
 
 export default function LoginModal({
@@ -26,7 +26,7 @@ export default function LoginModal({
   onClose,
   onSubmit,
 }: LoginModalProps) {
-  const [role, setRole] = useState<Role>("student");
+  const [role, setRole] = useState<Role>("ROLE_STUDENT");
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [showSignup, setShowSignup] = useState(false); // ✅ 회원가입 모달 on/off
@@ -85,7 +85,9 @@ export default function LoginModal({
                 role="tablist"
                 aria-label="로그인 유형 선택"
               >
-                {(["student", "professor", "admin"] as Role[]).map((r) => (
+                {(
+                  ["ROLE_STUDENT", "ROLE_PROFESSOR", "ROLE_ADMIN"] as Role[]
+                ).map((r) => (
                   <button
                     key={r}
                     type="button"
@@ -100,9 +102,9 @@ export default function LoginModal({
               </div>
 
               <label className="field-label" htmlFor="login-id">
-                {role === "student"
+                {role === "ROLE_STUDENT"
                   ? "학번"
-                  : role === "professor"
+                  : role === "ROLE_PROFESSOR"
                   ? "교번"
                   : "관리자 ID"}
               </label>
@@ -110,9 +112,9 @@ export default function LoginModal({
                 id="login-id"
                 className="text-input"
                 placeholder={`${
-                  role === "student"
+                  role === "ROLE_STUDENT"
                     ? "학번"
-                    : role === "professor"
+                    : role === "ROLE_PROFESSOR"
                     ? "교번"
                     : "관리자 ID"
                 }을 입력하세요`}
